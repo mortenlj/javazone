@@ -12,9 +12,6 @@ class Mode(str, Enum):
 
 
 class Settings(BaseSettings):
-    class Config:
-        env_prefix = "CONSOLE_"
-
     mode: Mode = Mode.DEBUG
     bind_address: str = "127.0.0.1"
     port: int = 3000
