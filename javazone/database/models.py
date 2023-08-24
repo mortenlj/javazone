@@ -1,6 +1,7 @@
 import uuid
 from sqlalchemy import Column, ForeignKey, Table, Text, Uuid
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, declarative_mixin, declared_attr
+from typing import Set
 
 from . import Base
 
@@ -19,7 +20,7 @@ class Common:
         return {c.name for c in mapper.columns}
 
 
-user_team = Table(
+user_session = Table(
     "association",
     Base.metadata,
     Column("user_id", ForeignKey("users.id"), primary_key=True),
