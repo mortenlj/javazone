@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "javazone"
+version = "0.1.0"
+description = "JavaZone calendar manager"
+authors = ["Morten Lied Johansen <mortenjo@ifi.uio.no>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fiaas-logging = "^0.1.1"
+pydantic = "^1.9.0"
+fastapi = "^0.74.1"
+uvicorn = {extras = ["standard"], version = "^0.17.5"}
+SQLAlchemy = "^1.4.31"
+psycopg2 = "^2.9.3"
+strawberry-graphql = {extras = ["fastapi"], version = "^0.97.0"}
+alembic = "^1.7.6"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6"
+prospector = "^1"
+pytest-cov = "^3"
+pytest-sugar = "^0.9"
+black = "^22.1.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
