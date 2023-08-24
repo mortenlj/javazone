@@ -11,8 +11,8 @@ fiaas-logging = "^0.1.1"
 pydantic = "^1.9.0"
 fastapi = "^0.74.1"
 uvicorn = {extras = ["standard"], version = "^0.17.5"}
-SQLAlchemy = "^1.4.31"
-psycopg = {extras = ["binary"], version = "^3.1.10"}
+SQLAlchemy = "^2.0.20"
+pymysql = "^1.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7"

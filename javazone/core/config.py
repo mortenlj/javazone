@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseSettings, PostgresDsn, validator
+from pydantic import BaseSettings, AnyUrl
 
 
 class Mode(str, Enum):
@@ -15,15 +15,11 @@ class Settings(BaseSettings):
     mode: Mode = Mode.DEBUG
     bind_address: str = "127.0.0.1"
     port: int = 3000
-    database_url: PostgresDsn = "postgres://postgres:postgres@localhost:5432/postgres"
+    database_url: AnyUrl = "mysql+pymysql://javazone:password@localhost:3306/javazone"
 
     @property
     def debug(self):
         return self.mode == Mode.DEBUG
-
-    @validator("database_url")
-    def fix_postgres_scheme(cls, v):
-        return v.replace("postgres:", "postgresql:", 1)
 
 
 settings = Settings()

@@ -1,10 +1,11 @@
-version: "3.9"
+version: '3.9'
 services:
-  postgres:
-    image: postgres:14-alpine
-    ports:
-      - "5432:5432"
+  db:
+    image: mariadb
     environment:
-      - "POSTGRES_USER=postgres"
-      - "POSTGRES_PASSWORD=postgres"
-      - "POSTGRES_DB=postgres"
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: javazone
+      MYSQL_USER: javazone
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
