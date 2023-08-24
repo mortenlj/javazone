@@ -4,9 +4,9 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from console.api import schemas
-from console.api.deps import get_db
-from console.database import models
+from javazone.api import schemas
+from javazone.api.deps import get_db
+from javazone.database import models
 
 router = APIRouter(
     responses={404: {"detail": "Not found"}},

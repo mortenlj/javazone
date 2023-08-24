@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from console.core.config import settings
+from javazone.core.config import settings
 
 Base = declarative_base()
 

@@ -1,4 +1,4 @@
-from console.database import get_session
+from javazone.database import get_session
 
 
 def get_db():

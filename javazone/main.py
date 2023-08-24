@@ -8,15 +8,14 @@ import uvicorn
 from fastapi import FastAPI
 from fiaas_logging import init_logging
 
-from console import api, gql
-from console.core.config import settings
+from javazone import api
+from javazone.core.config import settings
 
 LOG = logging.getLogger(__name__)
+TITLE = "JavaZone calendar manager"
 
-
-app = FastAPI(title="NAIS management console")
+app = FastAPI(title=TITLE)
 app.include_router(api.router, prefix="/api")
-app.include_router(gql.graphql_app, prefix="/graphql")
 
 
 class ExitOnSignal(Exception):
@@ -29,9 +28,9 @@ def main():
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, signal_handler)
     try:
-        LOG.info("Starting console")
+        LOG.info(f"Starting {TITLE}")
         uvicorn.run(
-            "console.main:app",
+            "javazone.main:app",
             host=settings.bind_address,
             port=settings.port,
             log_config=None,
@@ -51,10 +50,7 @@ def signal_handler(signum, frame):
 
 
 def _init_logging(debug):
-    if os.getenv("NAIS_CLIENT_ID"):
-        init_logging(format="json", debug=debug)
-    else:
-        init_logging(debug=debug)
+    init_logging(debug=debug)
     return logging.getLogger().getEffectiveLevel()
 
 

@@ -1,4 +1,4 @@
-ARG PY_VERSION=3.9
+ARG PY_VERSION=3.10
 ARG EARTHLY_GIT_PROJECT_NAME
 ARG BASEIMAGE=ghcr.io/$EARTHLY_GIT_PROJECT_NAME
 
@@ -27,14 +27,13 @@ build:
 
     RUN poetry install --no-root --no-interaction
 
-    COPY --dir .prospector.yaml console tests alembic .
+    COPY --dir .prospector.yaml javazone tests .
     RUN poetry install --no-interaction && \
         poetry run black --check . && \
         poetry run prospector && \
         poetry run pytest
 
-    SAVE ARTIFACT alembic
-    SAVE ARTIFACT console
+    SAVE ARTIFACT javazone
     SAVE IMAGE --cache-hint
 
 test:
@@ -57,11 +56,10 @@ docker:
     WORKDIR /app
 
     COPY --dir +deps/.venv .
-    COPY --dir +build/alembic .
-    COPY --dir +build/console .
+    COPY --dir +build/javazone .
 
     ENV PATH="/bin:/usr/bin:/usr/local/bin:/app/.venv/bin"
 
-    CMD ["/app/.venv/bin/python", "-m", "console"]
+    CMD ["/app/.venv/bin/python", "-m", "javazone"]
 
     SAVE IMAGE --push ${BASEIMAGE}:${IMAGE_TAG} ${BASEIMAGE}:latest

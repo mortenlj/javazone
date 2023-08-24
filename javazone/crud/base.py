@@ -12,7 +12,7 @@ from typing import (
 
 from sqlalchemy.orm import Session
 
-from console.database.models import Common
+from javazone.database.models import Common
 
 NOTSET = object()
 
