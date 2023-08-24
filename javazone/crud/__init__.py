@@ -2,8 +2,13 @@ from .base import CRUDBase
 from ..database import models
 
 
-class CRUDTeam(CRUDBase[models.Team]):
+class CRUDUser(CRUDBase[models.User]):
     ...
 
 
-team = CRUDTeam(models.Team)
+class CRUDSession(CRUDBase[models.Session]):
+    ...
+
+
+user = CRUDUser(models.User)
+session = CRUDSession(models.Session)
