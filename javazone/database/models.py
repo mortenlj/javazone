@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, ForeignKey, Table, Text, Uuid
+from sqlalchemy import Column, ForeignKey, Table, Text, Uuid, inspect
 from sqlalchemy.orm import relationship, declarative_mixin, declared_attr
 from typing import Set
 
@@ -21,7 +21,7 @@ class Common:
 
 
 user_session = Table(
-    "association",
+    "user_session",
     Base.metadata,
     Column("user_id", ForeignKey("users.id"), primary_key=True),
     Column("session_id", ForeignKey("sessions.id"), primary_key=True),

@@ -1,8 +1,4 @@
-import datetime
-import os
-
 import functools
-from argparse import Namespace
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -15,8 +11,9 @@ Base = declarative_base()
 
 @functools.cache
 def init():
+    from . import models
     engine = create_engine(settings.database_url)
-
+    Base.metadata.create_all(engine)
     return sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 

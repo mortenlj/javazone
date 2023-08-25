@@ -23,17 +23,18 @@ class ExitOnSignal(Exception):
 
 
 def main():
-    _init_logging(settings.debug)
+    log_level = _init_logging(settings.debug)
     exit_code = 0
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, signal_handler)
     try:
-        LOG.info(f"Starting {TITLE}")
+        LOG.info(f"Starting {TITLE} with configuration {settings}")
         uvicorn.run(
             "javazone.main:app",
             host=settings.bind_address,
             port=settings.port,
             log_config=None,
+            log_level=log_level,
             reload=settings.debug,
             access_log=settings.debug,
         )
