@@ -1,39 +1,27 @@
-import uuid
-from sqlalchemy import Column, ForeignKey, Table, Text, Uuid, inspect
-from sqlalchemy.orm import relationship, declarative_mixin, declared_attr
-from typing import Set
+from sqlalchemy import Column, ForeignKey, Table, Text, Uuid, String
+from sqlalchemy.orm import relationship
 
 from . import Base
-
-
-@declarative_mixin
-class Common:
-    @declared_attr
-    def __tablename__(cls):
-        return cls.__name__.lower() + "s"
-
-    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
-
-    @classmethod
-    def fields(cls) -> Set[str]:
-        mapper = inspect(cls)
-        return {c.name for c in mapper.columns}
-
 
 user_session = Table(
     "user_session",
     Base.metadata,
-    Column("user_id", ForeignKey("users.id"), primary_key=True),
+    Column("user_email", ForeignKey("users.email"), primary_key=True),
     Column("session_id", ForeignKey("sessions.id"), primary_key=True),
 )
 
 
-class Session(Common, Base):
-    title = Column(Text, unique=False, nullable=False)
-    hash = Column(Text, unique=False)
+class Session(Base):
+    __tablename__ = "sessions"
+
+    id = Column(Uuid(as_uuid=True), unique=True, primary_key=True, nullable=False)
+    title = Column(Text, nullable=False)
+    hash = Column(Text, nullable=False)
     users = relationship("User", secondary=user_session, back_populates="sessions")
 
 
-class User(Common, Base):
-    email = Column(Text, unique=True)
+class User(Base):
+    __tablename__ = "users"
+
+    email = Column(String(256), unique=True, primary_key=True, nullable=False)
     sessions = relationship("Session", secondary=user_session, back_populates="users")

@@ -5,4 +5,4 @@ from .endpoints import sessions
 
 router = APIRouter()
 router.include_router(users.router, prefix="/users", tags=["user"])
-router.include_router(sessions.router, prefix="/sessions", tags=["session"])
+# router.include_router(sessions.router, prefix="/sessions", tags=["session"])

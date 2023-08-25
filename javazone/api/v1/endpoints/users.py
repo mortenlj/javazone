@@ -1,7 +1,7 @@
 import uuid
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 
 from javazone.api import schemas
@@ -26,34 +26,36 @@ def get_users(db: Session = Depends(get_db)):
     "/",
     response_model=schemas.User,
     name="Create user",
+    status_code=201
 )
-def post_user(user: schemas.User, db: Session = Depends(get_db)):
-    db_user = models.User(**user.dict())
+def post_user(email: str, db: Session = Depends(get_db)):
+    db_user = models.User(email=email)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
 
-@router.put("/{id}", response_model=schemas.User, name="Update user")
-def put_user(id: uuid.UUID, user: schemas.User, db: Session = Depends(get_db)):
-    db_user: models.User = db.query(models.User).filter(models.User.id == id).first()
+@router.delete(
+    "/{id}",
+    name="Delete user",
+    status_code=204
+)
+def delete_user(email: str, db: Session = Depends(get_db)):
+    db_user: models.User = db.query(models.User).filter(models.User.email == email).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    for field in user.__fields_set__:
-        setattr(db_user, field, getattr(user, field))
-    db.merge(db_user)
+    db.delete(db_user)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    return
 
 
 @router.get(
     "/{id}",
     response_model=schemas.User,
 )
-def get_user(id: uuid.UUID, db: Session = Depends(get_db)):
-    db_user: models.User = db.query(models.User).filter(models.User.id == id).first()
+def get_user(email: str, db: Session = Depends(get_db)):
+    db_user: models.User = db.query(models.User).filter(models.User.email == email).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
