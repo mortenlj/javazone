@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import logging
-import os
 import signal
 import sys
 
@@ -10,11 +9,12 @@ from fiaas_logging import init_logging
 
 from javazone import api
 from javazone.core.config import settings
+from javazone.database import init_db
 
 LOG = logging.getLogger(__name__)
 TITLE = "JavaZone calendar manager"
 
-app = FastAPI(title=TITLE)
+app = FastAPI(title=TITLE, lifespan=init_db)
 app.include_router(api.router, prefix="/api")
 
 
