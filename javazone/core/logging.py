@@ -22,7 +22,8 @@ LOGGING_CONFIG: dict = {
 }
 
 
-def get_log_config(format):
+def get_log_config(format, log_level):
     config = LOGGING_CONFIG.copy()
     config["handlers"]["default"]["formatter"] = format
+    config["root"]["level"] = log_level
     return config

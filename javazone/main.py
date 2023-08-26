@@ -34,7 +34,7 @@ def main():
             "javazone.main:app",
             host=settings.bind_address,
             port=settings.port,
-            log_config=get_log_config(log_format),
+            log_config=get_log_config(log_format, log_level),
             log_level=log_level,
             reload=settings.debug,
             access_log=settings.debug,

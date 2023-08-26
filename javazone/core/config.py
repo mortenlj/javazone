@@ -1,3 +1,4 @@
+import datetime
 from enum import Enum
 
 from pydantic import AnyUrl
@@ -14,6 +15,7 @@ class Settings(BaseSettings):
     bind_address: str = "127.0.0.1"
     port: int = 3000
     database_url: AnyUrl = "mysql+pymysql://javazone:password@localhost:3306/javazone"
+    year: int = datetime.date.today().year
 
     @property
     def debug(self):

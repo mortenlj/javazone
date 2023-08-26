@@ -22,12 +22,7 @@ def get_users(db: Session = Depends(get_db)):
     return db.query(models.User).all()
 
 
-@router.post(
-    "/",
-    response_model=schemas.User,
-    name="Create user",
-    status_code=201
-)
+@router.post("/", response_model=schemas.User, name="Create user", status_code=201)
 def post_user(email: str, db: Session = Depends(get_db)):
     db_user = models.User(email=email)
     db.add(db_user)
@@ -36,13 +31,11 @@ def post_user(email: str, db: Session = Depends(get_db)):
     return db_user
 
 
-@router.delete(
-    "/{id}",
-    name="Delete user",
-    status_code=204
-)
+@router.delete("/{id}", name="Delete user", status_code=204)
 def delete_user(email: str, db: Session = Depends(get_db)):
-    db_user: models.User = db.query(models.User).filter(models.User.email == email).first()
+    db_user: models.User = (
+        db.query(models.User).filter(models.User.email == email).first()
+    )
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     db.delete(db_user)
@@ -55,7 +48,9 @@ def delete_user(email: str, db: Session = Depends(get_db)):
     response_model=schemas.User,
 )
 def get_user(email: str, db: Session = Depends(get_db)):
-    db_user: models.User = db.query(models.User).filter(models.User.email == email).first()
+    db_user: models.User = (
+        db.query(models.User).filter(models.User.email == email).first()
+    )
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
