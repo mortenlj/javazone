@@ -1,16 +1,11 @@
-ARG PY_VERSION=3.10
-ARG EARTHLY_GIT_PROJECT_NAME
-ARG BASEIMAGE=ghcr.io/$EARTHLY_GIT_PROJECT_NAME
+VERSION 0.7
 
 FROM busybox
 
 deps:
-    FROM python:${PY_VERSION}-slim
+    FROM python:3.10-slim
 
     WORKDIR /app
-
-    RUN apt-get --yes update && \
-        apt-get --yes install build-essential libpq-dev
 
     RUN pip install poetry
     ENV POETRY_VIRTUALENVS_IN_PROJECT=true
@@ -49,9 +44,7 @@ black:
         poetry run black .
 
 docker:
-    FROM navikt/python:${PY_VERSION}
-    ARG EARTHLY_GIT_SHORT_HASH
-    ARG IMAGE_TAG=$EARTHLY_GIT_SHORT_HASH
+    FROM python:3.10-slim
 
     WORKDIR /app
 
@@ -62,4 +55,26 @@ docker:
 
     CMD ["/app/.venv/bin/python", "-m", "javazone"]
 
-    SAVE IMAGE --push ${BASEIMAGE}:${IMAGE_TAG} ${BASEIMAGE}:latest
+    # builtins must be declared
+    ARG EARTHLY_GIT_PROJECT_NAME
+    ARG EARTHLY_GIT_SHORT_HASH
+
+    # Override from command-line on CI
+    ARG main_image=ghcr.io/$EARTHLY_GIT_PROJECT_NAME
+    ARG VERSION=$EARTHLY_GIT_SHORT_HASH
+
+    SAVE IMAGE --push ${main_image}:${VERSION} ${main_image}:latest
+
+manifests:
+    FROM dinutac/jinja2docker:latest
+    WORKDIR /manifests
+    COPY deploy/* /templates
+    ARG main_image=ghcr.io/$EARTHLY_GIT_PROJECT_NAME
+    ARG VERSION=$EARTHLY_GIT_SHORT_HASH
+    RUN --entrypoint -- /templates/application.yaml.j2 > ./deploy.yaml
+    RUN cat /templates/*.yaml >> ./deploy.yaml
+    SAVE ARTIFACT ./deploy.yaml AS LOCAL deploy.yaml
+
+deploy:
+    BUILD --platform=linux/amd64 --platform=linux/arm64 +docker
+    BUILD +manifests

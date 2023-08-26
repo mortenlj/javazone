@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "javazone-config"
+  namespace: default
+  labels:
+    app: javazone
+data:
+  bind_address: "0.0.0.0"
+  mode: "Release"

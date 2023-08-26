@@ -1,0 +1,11 @@
+---
+apiVersion: suffiks.com/v1
+kind: Application
+metadata:
+  name: javazone
+  namespace: default
+  labels:
+    app: javazone
+spec:
+  image: "{{ environ('main_image') }}:{{ environ('VERSION') }}"
+  port: 3000
