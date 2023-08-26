@@ -27,6 +27,12 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     needs: setup
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+      checks: write
+      pull-requests: write
     env:
       VERSION: "${{ needs.setup.outputs.VERSION }}"
     steps:
