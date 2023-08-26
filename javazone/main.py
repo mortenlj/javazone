@@ -5,10 +5,10 @@ import sys
 
 import uvicorn
 from fastapi import FastAPI
-from fiaas_logging import init_logging
 
 from javazone import api
 from javazone.core.config import settings
+from javazone.core.logging import get_log_config
 from javazone.database import init_db
 
 LOG = logging.getLogger(__name__)
@@ -23,7 +23,8 @@ class ExitOnSignal(Exception):
 
 
 def main():
-    log_level = _init_logging(settings.debug)
+    log_level = logging.DEBUG if settings.debug else logging.INFO
+    log_format = "plain"
     exit_code = 0
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, signal_handler)
@@ -33,7 +34,7 @@ def main():
             "javazone.main:app",
             host=settings.bind_address,
             port=settings.port,
-            log_config=None,
+            log_config=get_log_config(log_format),
             log_level=log_level,
             reload=settings.debug,
             access_log=settings.debug,
@@ -48,11 +49,6 @@ def main():
 
 def signal_handler(signum, frame):
     raise ExitOnSignal()
-
-
-def _init_logging(debug):
-    init_logging(debug=debug)
-    return logging.getLogger().getEffectiveLevel()
 
 
 if __name__ == "__main__":
