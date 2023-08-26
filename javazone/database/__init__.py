@@ -12,7 +12,7 @@ Base = declarative_base()
 
 @functools.cache
 def init():
-    from . import models  # Imported here for side effect of loading Base subclasses
+    from . import models  # NOQA F401: Imported here for side effect of loading Base subclasses
 
     engine = create_engine(settings.database.dsn())
     Base.metadata.create_all(engine)

@@ -28,9 +28,7 @@ def get_sessions(db: Session = Depends(get_db)):
     response_model=schemas.Session,
 )
 def get_session(id: uuid.UUID, db: Session = Depends(get_db)):
-    db_session: models.Session = (
-        db.query(models.Session).filter(models.Session.id == id).first()
-    )
+    db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
     return db_session

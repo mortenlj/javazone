@@ -16,17 +16,13 @@ def _load_data(year):
     resp = requests.get(DATA_URL % year)
     resp.raise_for_status()
     raw_data = resp.json()
-    return {
-        uuid.UUID(session["sessionId"]): session for session in raw_data["sessions"]
-    }
+    return {uuid.UUID(session["sessionId"]): session for session in raw_data["sessions"]}
 
 
 def update_sessions(db):
     LOG.info("Updating sessions")
     data = _load_data(settings.year)
-    db_sessions = {
-        db_session.id: db_session for db_session in db.query(models.Session).all()
-    }
+    db_sessions = {db_session.id: db_session for db_session in db.query(models.Session).all()}
     needs_update = []
     added = 0
     for session_id in data:
@@ -40,9 +36,7 @@ def update_sessions(db):
                 db_session.hash = session_hash
                 needs_update.append(db_session)
         else:
-            db_session = models.Session(
-                id=session_id, hash=session_hash, data=session_data
-            )
+            db_session = models.Session(id=session_id, hash=session_hash, data=session_data)
             db.add(db_session)
             added += 1
     db.commit()
