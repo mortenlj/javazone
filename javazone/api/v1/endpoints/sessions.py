@@ -22,32 +22,6 @@ def get_sessions(db: Session = Depends(get_db)):
     return db.query(models.Session).all()
 
 
-@router.post(
-    "/",
-    response_model=schemas.Session,
-    name="Create session",
-)
-def post_session(session: schemas.Session, db: Session = Depends(get_db)):
-    db_session = models.Session(**session.dict())
-    db.add(db_session)
-    db.commit()
-    db.refresh(db_session)
-    return db_session
-
-
-@router.put("/{id}", response_model=schemas.Session, name="Update session")
-def put_session(id: uuid.UUID, session: schemas.Session, db: Session = Depends(get_db)):
-    db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
-    if db_session is None:
-        raise HTTPException(status_code=404, detail="Session not found")
-    for field in session.__fields_set__:
-        setattr(db_session, field, getattr(session, field))
-    db.merge(db_session)
-    db.commit()
-    db.refresh(db_session)
-    return db_session
-
-
 @router.get(
     "/{id}",
     response_model=schemas.Session,

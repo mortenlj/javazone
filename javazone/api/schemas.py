@@ -17,8 +17,8 @@ class Session(BaseModel):
         orm_mode = True
 
     id: UUID
-    title: str
     hash: str
+    json: str
     users: List["User"] = []
 
 

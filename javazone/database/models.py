@@ -15,8 +15,8 @@ class Session(Base):
     __tablename__ = "sessions"
 
     id = Column(Uuid(as_uuid=True), unique=True, primary_key=True, nullable=False)
-    title = Column(Text, nullable=False)
     hash = Column(Text, nullable=False)
+    json = Column(Text, nullable=False)
     users = relationship("User", secondary=user_session, back_populates="sessions")
 
 
