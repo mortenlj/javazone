@@ -2,25 +2,24 @@ from typing import List, Optional
 from uuid import UUID
 
 from pydantic.main import BaseModel
+from pydantic import ConfigDict
 
 
 class User(BaseModel):
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
     email: str
     sessions: List["Session"]
 
 
 class Session(BaseModel):
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
     id: UUID
     hash: str
-    json: str
+    data: str
     users: List["User"] = []
 
 
-Session.update_forward_refs()
-User.update_forward_refs()
+Session.model_rebuild()
+User.model_rebuild()

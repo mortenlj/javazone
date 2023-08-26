@@ -1,14 +1,12 @@
 from enum import Enum
 
-from pydantic import BaseSettings, AnyUrl
+from pydantic import AnyUrl
+from pydantic_settings import BaseSettings
 
 
 class Mode(str, Enum):
     DEBUG = "Debug"
     RELEASE = "Release"
-
-    def __new__(cls, value):
-        return super().__new__(cls, value.lower())
 
 
 class Settings(BaseSettings):

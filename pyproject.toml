@@ -8,11 +8,12 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.10"
 fiaas-logging = "^0.1.1"
-pydantic = "^1.9.0"
-fastapi = "^0.74.1"
+pydantic = "^2.3.0"
+fastapi = "^0.101.1"
 uvicorn = {extras = ["standard"], version = "^0.17.5"}
 SQLAlchemy = "^2.0.20"
 pymysql = "^1.1.0"
+pydantic-settings = "^2.0.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7"
