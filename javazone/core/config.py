@@ -1,8 +1,9 @@
 import datetime
 from enum import Enum
 
-from pydantic import AnyUrl
-from pydantic_settings import BaseSettings
+from furl import furl
+from pydantic import AnyUrl, BaseModel, SecretStr, Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Mode(str, Enum):
@@ -10,12 +11,32 @@ class Mode(str, Enum):
     RELEASE = "Release"
 
 
+class DatabaseSettings(BaseModel):
+    username: str = None
+    password: SecretStr = None
+    url: AnyUrl = AnyUrl("mysql+pymysql://javazone:password@localhost:3306/javazone")
+
+    def dsn(self):
+        if self.url.scheme == "sqlite":
+            return self.url
+        url = furl(self.url)
+        if self.username and not url.username:
+            url.username = self.username
+        if self.password and self.password.get_secret_value() and not url.password:
+            url.password = self.password.get_secret_value()
+        if url.scheme == "postgres":
+            url.scheme = "postgresql"
+        return str(url)
+
+
 class Settings(BaseSettings):
     mode: Mode = Mode.DEBUG
     bind_address: str = "127.0.0.1"
     port: int = 3000
-    database_url: AnyUrl = "mysql+pymysql://javazone:password@localhost:3306/javazone"
+    database: DatabaseSettings = Field(default_factory=DatabaseSettings)
     year: int = datetime.date.today().year
+
+    model_config = SettingsConfigDict(env_nested_delimiter="__")
 
     @property
     def debug(self):

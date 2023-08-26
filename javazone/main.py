@@ -29,7 +29,7 @@ def main():
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, signal_handler)
     try:
-        LOG.info(f"Starting {TITLE} with configuration {settings}")
+        print(f"Starting {TITLE} with configuration {settings}")
         uvicorn.run(
             "javazone.main:app",
             host=settings.bind_address,
@@ -42,7 +42,7 @@ def main():
     except ExitOnSignal:
         pass
     except Exception as e:
-        logging.exception(f"unwanted exception: {e}")
+        print(f"unwanted exception: {e}")
         exit_code = 113
     return exit_code
 

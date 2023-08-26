@@ -14,7 +14,7 @@ Base = declarative_base()
 def init():
     from . import models  # Imported here for side effect of loading Base subclasses
 
-    engine = create_engine(str(settings.database_url))
+    engine = create_engine(settings.database.dsn())
     Base.metadata.create_all(engine)
     return sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
