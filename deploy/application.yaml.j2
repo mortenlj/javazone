@@ -10,5 +10,5 @@ spec:
   image: "{{ environ('main_image') }}:{{ environ('VERSION') }}"
   port: 3000
   envFrom:
-    - configMap: javazone-config
+    - configmap: javazone-config
     - secret: javazone-db
