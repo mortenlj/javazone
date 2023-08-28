@@ -22,7 +22,7 @@ pytest = "^7"
 prospector = "^1"
 pytest-cov = "^3"
 pytest-sugar = "^0.9"
-black = "^22.1.0"
+black = "^23.7.0"
 
 
 [tool.black]
