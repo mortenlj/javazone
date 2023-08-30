@@ -5,13 +5,14 @@ metadata:
   name: javazone
   namespace: default
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-staging
+    cert-manager.io/cluster-issuer: letsencrypt-production
 spec:
   rules:
     - host: javazone.home.ibidem.no
       http:
         paths:
           - path: /
+            pathType: Prefix
             backend:
               service:
                 name: javazone
