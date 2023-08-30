@@ -6,6 +6,8 @@ metadata:
   namespace: default
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-production
+  labels:
+    app: javazone
 spec:
   rules:
     - host: javazone.home.ibidem.no
