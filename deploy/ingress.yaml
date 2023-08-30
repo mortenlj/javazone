@@ -1,5 +1,5 @@
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: javazone
@@ -20,4 +20,4 @@ spec:
   tls:
     - hosts:
       - javazone.home.ibidem.no
-      certificateName: javazone-ingress-cert
+      secretName: javazone-ingress-cert
