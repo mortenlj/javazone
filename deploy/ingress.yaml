@@ -8,7 +8,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
   rules:
-    - host: javazone.ibidem.no
+    - host: javazone.home.ibidem.no
       http:
         paths:
           - path: /
@@ -19,5 +19,5 @@ spec:
                   name: http
   tls:
     - hosts:
-      - javazone.ibidem.no
+      - javazone.home.ibidem.no
       certificateName: javazone-ingress-cert
