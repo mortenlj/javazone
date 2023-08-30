@@ -1,3 +1,4 @@
+import json
 import logging
 import uuid
 from hashlib import sha256
@@ -26,8 +27,8 @@ def update_sessions(db):
     needs_update = []
     added = 0
     for session_id in data:
-        session_data = str(data[session_id])
-        session_hash = sha256(session_data.encode("utf-8")).hexdigest()
+        session_data = json.dumps(data[session_id], indent=None).encode("utf-8")
+        session_hash = sha256(session_data).hexdigest()
         LOG.debug("Processing %s (hash: %s)", session_id, session_hash)
         if session_id in db_sessions:
             db_session = db_sessions[session_id]
