@@ -106,6 +106,9 @@ jobs:
           sudo zerotier-cli listnetworks
           ping -c 5 k3s.home.ibidem.no
           echo "::endgroup::"
+          echo "::group::Manifest debugging"
+          cat deploy.yaml | grep -E 'kind|apiVersion'
+          echo "::endgroup::"
           kubectl apply --namespace=default --context=k3s-home --filename=deploy.yaml --selector=app=javazone --prune=true --wait=true --timeout=60s
       - name: Leave ZeroTier network
         if: always()
