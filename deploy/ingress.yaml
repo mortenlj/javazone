@@ -1,0 +1,23 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: javazone
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+spec:
+  rules:
+    - host: javazone.ibidem.no
+      http:
+        paths:
+          - path: /
+            backend:
+              service:
+                name: javazone
+                port:
+                  name: http
+  tls:
+    - hosts:
+      - javazone.ibidem.no
+      certificateName: javazone-ingress-cert
