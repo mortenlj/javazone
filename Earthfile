@@ -1,5 +1,7 @@
 VERSION 0.7
 
+IMPORT github.com/mortenlj/earthly-lib/kubernetes/commands AS lib-k8s-commands
+
 FROM busybox
 
 deps:
@@ -66,14 +68,9 @@ docker:
     SAVE IMAGE --push ${main_image}:${VERSION} ${main_image}:latest
 
 manifests:
-    FROM dinutac/jinja2docker:latest
-    WORKDIR /manifests
-    COPY deploy/* /templates
     ARG main_image=ghcr.io/$EARTHLY_GIT_PROJECT_NAME
     ARG VERSION=$EARTHLY_GIT_SHORT_HASH
-    RUN --entrypoint -- /templates/application.yaml.j2 > ./deploy.yaml
-    RUN cat /templates/*.yaml >> ./deploy.yaml
-    SAVE ARTIFACT ./deploy.yaml AS LOCAL deploy.yaml
+    DO lib-k8s-commands+ASSEMBLE_MANIFESTS --IMAGE=${main_image} --VERSION=${VERSION}
 
 deploy:
     BUILD --platform=linux/amd64 --platform=linux/arm64 +docker
