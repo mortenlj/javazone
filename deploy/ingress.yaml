@@ -6,6 +6,7 @@ metadata:
   namespace: default
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-production
+    haproxy-ingress.github.io/rewrite-target: /
   labels:
     app: javazone
 spec:
