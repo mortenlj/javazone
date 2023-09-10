@@ -29,11 +29,17 @@ class DatabaseSettings(BaseModel):
         return str(url)
 
 
+class GoogleOAuthSettings(BaseModel):
+    client_id: str = None
+    client_secret: SecretStr = None
+
+
 class Settings(BaseSettings):
     mode: Mode = Mode.DEBUG
     bind_address: str = "127.0.0.1"
     port: int = 3000
     database: DatabaseSettings = Field(default_factory=DatabaseSettings)
+    oauth: GoogleOAuthSettings = Field(default_factory=GoogleOAuthSettings)
     year: int = datetime.date.today().year
 
     model_config = SettingsConfigDict(env_nested_delimiter="__")

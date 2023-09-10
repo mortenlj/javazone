@@ -2,6 +2,7 @@
 import logging
 import signal
 import sys
+from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
@@ -10,16 +11,25 @@ from javazone import api
 from javazone.core.config import settings
 from javazone.core.logging import get_log_config
 from javazone.database import init_db
+from javazone.security import init_jwt
 
 LOG = logging.getLogger(__name__)
 TITLE = "JavaZone calendar manager"
 
-app = FastAPI(title=TITLE, lifespan=init_db)
-app.include_router(api.router, prefix="/api")
-
 
 class ExitOnSignal(Exception):
     pass
+
+
+@asynccontextmanager
+async def on_startup(app: FastAPI):
+    async with init_db(app):
+        async with init_jwt(app):
+            yield
+
+
+app = FastAPI(title=TITLE, lifespan=on_startup)
+app.include_router(api.router, prefix="/api")
 
 
 def main():

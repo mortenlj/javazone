@@ -4,12 +4,17 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from javazone.api import schemas
-from javazone.api.deps import get_db
+from javazone.api.deps import get_db, get_current_user
 from javazone.database import models
 
 router = APIRouter(
     responses={404: {"detail": "Not found"}},
 )
+
+
+@router.get("/me")
+def get_me(email: str = Depends(get_current_user)):
+    return {"email": email}
 
 
 @router.get(
