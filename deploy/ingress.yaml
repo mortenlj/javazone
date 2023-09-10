@@ -9,11 +9,12 @@ metadata:
   labels:
     app: javazone
 spec:
+  ingressClassName: authenticated
   rules:
-    - host: javazone.home.ibidem.no
+    - host: ibidem.no
       http:
         paths:
-          - path: /
+          - path: /javazone
             pathType: Prefix
             backend:
               service:
@@ -22,5 +23,5 @@ spec:
                   name: http
   tls:
     - hosts:
-      - javazone.home.ibidem.no
-      secretName: javazone-ingress-cert
+        - ibidem.no
+      secretName: ibidem-ingress-cert
