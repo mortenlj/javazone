@@ -1,3 +1,4 @@
+import json
 import uuid
 from typing import List
 
@@ -16,11 +17,11 @@ router = APIRouter(
 
 @router.get(
     "/",
-    response_model=List[schemas.Session],
+    response_model=List[dict],
 )
 def get_sessions(db: Session = Depends(get_db)):
     """List all sessions"""
-    return db.query(models.Session).all()
+    return [json.loads(s.data) for s in db.query(models.Session).all()]
 
 
 @router.get(
