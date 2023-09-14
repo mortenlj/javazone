@@ -31,7 +31,7 @@ async def get_current_user(
     if db_user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
+            detail="Unknown user",
             headers={"WWW-Authenticate": "Bearer"},
         )
     return db_user
