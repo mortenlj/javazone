@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     database: DatabaseSettings = Field(default_factory=DatabaseSettings)
     oauth: GoogleOAuthSettings = Field(default_factory=GoogleOAuthSettings)
     year: int = datetime.date.today().year
+    root_path: str = ""
 
     model_config = SettingsConfigDict(env_nested_delimiter="__")
 
