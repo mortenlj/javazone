@@ -1,33 +1,33 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from javazone.api import schemas
-from javazone.api.deps import get_db, get_current_user
+from javazone.api.deps import get_db, get_current_user, get_authenticated_email
 from javazone.database import models
 
 router = APIRouter(
-    responses={404: {"detail": "Not found"}},
+    responses={status.HTTP_404_NOT_FOUND: {"detail": "Not found"}},
 )
 
 
-@router.get("/me")
-def get_me(email: str = Depends(get_current_user)):
-    return {"email": email}
+@router.get("/me", response_model=schemas.User)
+def get_me(user: schemas.User = Depends(get_current_user)):
+    return user
 
 
 @router.get(
     "/",
     response_model=List[schemas.User],
 )
-def get_users(db: Session = Depends(get_db)):
+def get_users(db: Session = Depends(get_db), _: schemas.User = Depends(get_current_user)):
     """List all users"""
     return db.query(models.User).all()
 
 
-@router.post("/", response_model=schemas.User, name="Create user", status_code=201)
-def post_user(email: str, db: Session = Depends(get_db)):
+@router.post("/", response_model=schemas.User, name="Create user", status_code=status.HTTP_201_CREATED)
+def post_user(email: str = Depends(get_authenticated_email), db: Session = Depends(get_db)):
     db_user = models.User(email=email)
     db.add(db_user)
     db.commit()
@@ -35,12 +35,9 @@ def post_user(email: str, db: Session = Depends(get_db)):
     return db_user
 
 
-@router.delete("/{id}", name="Delete user", status_code=204)
-def delete_user(email: str, db: Session = Depends(get_db)):
-    db_user: models.User = db.query(models.User).filter(models.User.email == email).first()
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    db.delete(db_user)
+@router.delete("/{id}", name="Delete user", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    db.delete(user)
     db.commit()
     return
 
@@ -49,8 +46,8 @@ def delete_user(email: str, db: Session = Depends(get_db)):
     "/{id}",
     response_model=schemas.User,
 )
-def get_user(email: str, db: Session = Depends(get_db)):
+def get_user(email: str, db: Session = Depends(get_db), _: schemas.User = Depends(get_current_user)):
     db_user: models.User = db.query(models.User).filter(models.User.email == email).first()
     if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return db_user
