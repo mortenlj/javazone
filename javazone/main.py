@@ -8,6 +8,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from javazone import api
+from javazone.api import probes
 from javazone.core.config import settings
 from javazone.core.logging import get_log_config
 from javazone.database import init_db
@@ -30,6 +31,7 @@ async def on_startup(app: FastAPI):
 
 app = FastAPI(title=TITLE, lifespan=on_startup)
 app.include_router(api.router, prefix="/api")
+app.include_router(probes.router, prefix="/_")
 
 
 def main():
