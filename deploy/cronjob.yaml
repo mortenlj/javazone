@@ -4,7 +4,7 @@ kind: CronJob
 metadata:
   labels:
     app: javazone
-  name: javazone-update-sessions
+  name: javazone-update-sessions-september
   namespace: default
 spec:
   concurrencyPolicy: Replace
@@ -29,4 +29,68 @@ spec:
             - "http://javazone/api/v1/sessions/"
           dnsPolicy: ClusterFirst
           restartPolicy: Never
-  schedule: "*/10 * * * *"
+  schedule: "*/10 * 1-20 9 *"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  labels:
+    app: javazone
+  name: javazone-update-sessions-summer
+  namespace: default
+spec:
+  concurrencyPolicy: Replace
+  jobTemplate:
+    metadata:
+      labels:
+        app: javazone
+    spec:
+      template:
+        metadata:
+          labels:
+            app: javazone
+        spec:
+          containers:
+            - image: "busybox"
+              imagePullPolicy: IfNotPresent
+              name: javazone
+              args:
+                - "wget"
+                - "--post-data"
+                - ""
+                - "http://javazone/api/v1/sessions/"
+          dnsPolicy: ClusterFirst
+          restartPolicy: Never
+  schedule: "10 5 * 6-8 *"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  labels:
+    app: javazone
+  name: javazone-update-sessions-else
+  namespace: default
+spec:
+  concurrencyPolicy: Replace
+  jobTemplate:
+    metadata:
+      labels:
+        app: javazone
+    spec:
+      template:
+        metadata:
+          labels:
+            app: javazone
+        spec:
+          containers:
+            - image: "busybox"
+              imagePullPolicy: IfNotPresent
+              name: javazone
+              args:
+                - "wget"
+                - "--post-data"
+                - ""
+                - "http://javazone/api/v1/sessions/"
+          dnsPolicy: ClusterFirst
+          restartPolicy: Never
+  schedule: "10 4 6 1-5,10-12 *"
