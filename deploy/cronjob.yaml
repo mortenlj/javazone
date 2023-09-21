@@ -26,7 +26,7 @@ spec:
             - "wget"
             - "--post-data"
             - ""
-            - "http://javazone/api/v1/sessions"
+            - "http://javazone/api/v1/sessions/"
           dnsPolicy: ClusterFirst
           restartPolicy: Never
   schedule: "*/10 * * * *"
