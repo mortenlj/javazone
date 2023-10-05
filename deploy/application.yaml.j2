@@ -13,3 +13,10 @@ spec:
     - configmap: javazone-config
     - secret: javazone-db
     - secret: javazone
+  ingress:
+    ingress_class: authenticated
+    routes:
+      - host: ibidem.no
+        path: /javazone/
+        port: 3000
+        type: http
