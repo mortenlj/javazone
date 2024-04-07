@@ -4,7 +4,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-on: [ push ]
+on:
+  push:
+  workflow_dispatch:
 
 env:
   main_image: ghcr.io/${{ github.repository }}
