@@ -46,12 +46,16 @@ black:
         poetry run black .
 
 reseal-secret:
-    LOCALLY
-    RUN kubectl create secret generic --dry-run=client --namespace default -ojson javazone --from-env-file=.env | \
+    FROM ghcr.io/mortenlj/kafka-debug:20240502140355-1d44edf
+
+    COPY .env .
+    RUN --mount=type=secret,id=kubeconfig,target=/root/.kube/config \
+        kubectl create secret generic --dry-run=client --namespace default -ojson javazone --from-env-file=.env | \
         jq '.metadata.labels.app="javazone"' | \
         kubeseal -ojson | \
         jq '.metadata.labels.app="javazone"' | \
-        yq -Poyaml > deploy/sealed-secret.yaml
+        yq -Poyaml > sealed-secret.yaml
+    SAVE ARTIFACT sealed-secret.yaml AS LOCAL deploy/sealed-secret.yaml
 
 docker:
     FROM python:3.10-slim

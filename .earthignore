@@ -37,7 +37,6 @@ downloads/
 eggs/
 ehthumbs.db
 ehthumbs_vista.db
-.env
 env/
 ENV/
 env.bak/
