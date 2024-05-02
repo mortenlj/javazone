@@ -45,6 +45,14 @@ black:
     RUN poetry install --no-interaction && \
         poetry run black .
 
+reseal-secret:
+    LOCALLY
+    RUN kubectl create secret generic --dry-run=client --namespace default -ojson javazone --from-env-file=.env | \
+        jq '.metadata.labels.app="javazone"' | \
+        kubeseal -ojson | \
+        jq '.metadata.labels.app="javazone"' | \
+        yq -Poyaml > deploy/sealed-secret.yaml
+
 docker:
     FROM python:3.10-slim
 
