@@ -14,7 +14,7 @@ Base = declarative_base()
 def init():
     from . import models  # NOQA F401: Imported here for side effect of loading Base subclasses
 
-    engine = create_engine(settings.database.dsn())
+    engine = create_engine(settings.database.dsn(), pool_pre_ping=True)
     Base.metadata.create_all(engine)
     return sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
