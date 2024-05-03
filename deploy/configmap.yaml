@@ -9,4 +9,4 @@ metadata:
 data:
   bind_address: "0.0.0.0"
   mode: "Release"
-  root_path: "/javazone"
+  root_path: "/"
