@@ -9,7 +9,7 @@ license = "MIT"
 python = "^3.10"
 fiaas-logging = "^0.1.1"
 pydantic = "^2.8.2"
-fastapi = "^0.111.1"
+fastapi = "^0.112.0"
 uvicorn = {extras = ["standard"], version = "^0.30.5"}
 SQLAlchemy = "^2.0.31"
 pymysql = "^1.1.1"
