@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "javazone-config"
+  name: javazone
   namespace: default
   labels:
     app: javazone

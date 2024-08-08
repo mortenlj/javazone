@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+  labels:
+    app: javazone
+  name: javazone
+  namespace: default
+spec:
+  ingressClassName: authenticated
+  rules:
+  - host: javazone.ibidem.no
+    http:
+      paths:
+      - backend:
+          service:
+            name: javazone
+            port:
+              number: 3000
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - javazone.ibidem.no
+    secretName: cert-ingress-kjw4k4tt71t27539g29qkkxq44
