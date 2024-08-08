@@ -1,4 +1,4 @@
-VERSION 0.7
+VERSION 0.8
 
 IMPORT github.com/mortenlj/earthly-lib/kubernetes/commands AS lib-k8s-commands
 
@@ -21,8 +21,6 @@ deps:
 
 build:
     FROM +deps
-
-    RUN poetry install --no-root --no-interaction
 
     COPY --dir .prospector.yaml javazone tests .
     RUN poetry install --no-interaction && \

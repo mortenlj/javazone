@@ -54,17 +54,24 @@ jobs:
       - name: "Pull latest image so it exists locally and can be used by cache :crossed_fingers:"
         continue-on-error: true
         run: docker pull "${main_image}:latest"
+      - name: Install earthly
+        uses: earthly/actions-setup@43211c7a0eae5344d6d79fb4aaf209c8f8866203 # ratchet:earthly/actions-setup@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and possibly push
         env:
           EARTHLY_PUSH: "${{ github.ref == 'refs/heads/main' }}"
-          EARTHLY_USE_INLINE_CACHE: true
-          EARTHLY_SAVE_INLINE_CACHE: true
           EARTHLY_VERBOSE: true
           EARTHLY_FULL_TARGET: true
           EARTHLY_OUTPUT: true
+          EARTHLY_ORG: ${{ vars.EARTHLY_ORG }}
+          EARTHLY_SATELLITE: ${{ vars.EARTHLY_SATELLITE }}
+          EARTHLY_TOKEN: ${{ secrets.EARTHLY_TOKEN }}
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          ./earthlyw --version
-          ./earthlyw "--remote-cache=${cache_image}" +deploy "--main_image=${main_image}" "--VERSION=${VERSION}"
+          earthly --version
+          earthly "--remote-cache=${cache_image}" +deploy "--main_image=${main_image}" "--VERSION=${VERSION}"
       - name: Save manifests for later deploy
         uses: actions/upload-artifact@v4
         with:
