@@ -30,8 +30,8 @@ class DatabaseSettings(BaseModel):
 
 
 class GoogleOAuthSettings(BaseModel):
-    client_id: str = None
-    client_secret: SecretStr = None
+    client_id: str
+    client_secret: SecretStr
 
 
 class Settings(BaseSettings):
