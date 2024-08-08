@@ -5,7 +5,7 @@ IMPORT github.com/mortenlj/earthly-lib/kubernetes/commands AS lib-k8s-commands
 FROM busybox
 
 deps:
-    FROM python:3.10-slim
+    FROM python:3.12-slim
 
     WORKDIR /app
 
@@ -58,7 +58,7 @@ reseal-secret:
     SAVE ARTIFACT sealed-secret.yaml AS LOCAL deploy/sealed-secret.yaml
 
 docker:
-    FROM python:3.10-slim
+    FROM python:3.12-slim
 
     WORKDIR /app
 
