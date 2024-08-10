@@ -69,6 +69,8 @@ class Javazone:
                 variants.append(self.docker(source, platform))
             if push:
                 cos.append(manifest.publish(f"{image}:{v}", platform_variants=variants))
+            else:
+                cos.append(manifest.export(f"./exported-image-{v}.tar.gz", platform_variants=variants))
 
         return await asyncio.gather(*cos)
 
