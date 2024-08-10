@@ -1,6 +1,6 @@
 import asyncio
 
-from itertools import chain
+from jinja2 import Template
 
 import dagger
 from dagger import dag, function, object_type
@@ -72,11 +72,30 @@ class Javazone:
         return await asyncio.gather(*cos)
 
     @function
-    async def deploy(self, source: dagger.Directory, image: str = "ttl.sh/mortenlj-javazone", version: str = "develop") -> list[str]:
-        """Build and assemble deployable artifacts"""
-        publishing_co = self.publish(source, image, version)
-        # TODO: Assemble manifests
-        # manifests_co = self.assemble_manifests(source, image, version)
+    async def assemble_manifests(self, source: dagger.Directory, image: str = "ttl.sh/mortenlj-javazone", version: str = "develop") -> dagger.File:
+        """Assemble manifests """
+        template_dir = source.directory("deploy")
+        documents = []
+        for filepath in await template_dir.entries():
+            src = await template_dir.file(filepath).contents()
+            if not filepath.endswith(".j2"):
+                contents = src
+            else:
+                template = Template(src, enable_async=True)
+                contents = await template.render_async(image=image, version=version)
+            if contents.startswith("---"):
+                documents.append(contents)
+            else:
+                documents.append("---\n" + contents)
+        return await (
+            source
+            .with_new_file("deploy.yaml", "\n".join(documents))
+            .file("deploy.yaml")
+        )
 
-        results = await asyncio.gather(publishing_co)
-        return list(chain.from_iterable(results))
+
+    @function
+    async def deploy(self, source: dagger.Directory, image: str = "ttl.sh/mortenlj-javazone", version: str = "develop") -> dagger.File:
+        """Build and assemble deployable artifacts"""
+        await self.publish(source, image, version)
+        return await self.assemble_manifests(source, image, version)

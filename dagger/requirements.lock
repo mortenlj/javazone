@@ -43,8 +43,12 @@ idna==3.7
     #   yarl
 importlib-metadata==8.0.0
     # via opentelemetry-api
+jinja2==3.1.4
+    # via main (pyproject.toml)
 markdown-it-py==3.0.0
     # via rich
+markupsafe==2.1.5
+    # via jinja2
 mdurl==0.1.2
     # via markdown-it-py
 multidict==6.0.5

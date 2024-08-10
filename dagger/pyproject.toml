@@ -1,7 +1,9 @@
 [project]
 name = "main"
 version = "0.0.0"
-dependencies = []
+dependencies = [
+    "jinja2"
+]
 
 [build-system]
 requires = ["hatchling"]
