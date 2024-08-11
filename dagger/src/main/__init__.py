@@ -55,7 +55,7 @@ class Javazone:
 
 
     @function
-    async def publish(self, source: dagger.Directory, image: str = "ttl.sh/mortenlj-javazone", version: str = "develop", push: bool = False) -> list[str]:
+    async def publish(self, source: dagger.Directory, image: str = "ttl.sh/mortenlj-javazone", version: str = "develop") -> list[str]:
         """Publish the application container after building and testing it on-the-fly"""
         platforms = [
             dagger.Platform("linux/amd64"),  # a.k.a. x86_64
@@ -67,10 +67,7 @@ class Javazone:
             variants = []
             for platform in platforms:
                 variants.append(self.docker(source, platform))
-            if push:
-                cos.append(manifest.publish(f"{image}:{v}", platform_variants=variants))
-            else:
-                cos.append(manifest.export(f"./exported-image-{v}.tar.gz", platform_variants=variants))
+            cos.append(manifest.publish(f"{image}:{v}", platform_variants=variants))
 
         return await asyncio.gather(*cos)
 
@@ -95,10 +92,3 @@ class Javazone:
             .with_new_file("deploy.yaml", "\n".join(documents))
             .file("deploy.yaml")
         )
-
-
-    @function
-    async def deploy(self, source: dagger.Directory, image: str = "ttl.sh/mortenlj-javazone", version: str = "develop", push: bool = False) -> dagger.File:
-        """Build and assemble deployable artifacts"""
-        await self.publish(source, image, version, push)
-        return await self.assemble_manifests(source, image, version)
