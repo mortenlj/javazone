@@ -1,9 +1,23 @@
 import asyncio
+import textwrap
+from typing import Annotated
 
 from jinja2 import Template
 
 import dagger
-from dagger import dag, function, object_type
+from dagger import dag, function, object_type, Doc
+
+
+RESEAL_SCRIPT = textwrap.dedent("""\
+    #!/bin/bash
+    
+    echo "---" > sealed-secret.yaml
+    kubectl create secret generic --dry-run=client --namespace default -ojson javazone --from-env-file=.env | \
+        jq '.metadata.labels.app="javazone"' | \
+        kubeseal -ojson | \
+        jq '.metadata.labels.app="javazone"' | \
+        yq -Poyaml >> sealed-secret.yaml
+""")
 
 
 @object_type
@@ -91,4 +105,18 @@ class Javazone:
             source
             .with_new_file("deploy.yaml", "\n".join(documents))
             .file("deploy.yaml")
+        )
+
+    @function
+    async def reseal_secret(self, source: dagger.Directory, kubeconfig: Annotated[dagger.Secret, Doc("kubeconfig file for the cluster")]) -> dagger.File:
+        """Reseal the secret, using the kubeconfig file for the cluster"""
+        return await (
+            dag.container()
+            .from_("ghcr.io/mortenlj/kafka-debug:latest")
+            .with_workdir("/reseal")
+            .with_new_file("/root/.kube/config", await kubeconfig.plaintext())
+            .with_new_file("reseal.sh", RESEAL_SCRIPT)
+            .with_file(".env", source.file(".env"))
+            .with_exec(["bash", "reseal.sh"])
+            .file("sealed-secret.yaml")
         )
