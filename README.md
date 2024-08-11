@@ -10,8 +10,18 @@ If the session changes, you get calendar updates automatically.
 
 ## Development
 
-We use [`earthly`](https://earthly.dev) for building.
-If you don't have earthly installed, you can use the wrapper [`earthlyw`](https://github.com/mortenlj/earthlyw) in the root of the repository.
+We use [`dagger`](https://dagger.io) for building.
 
-Build docker image: `./earthlyw +docker`
-Run prospector and pytest: `./earthlyw +test`
+Various useful commands:
+
+### Reseal the secret by connecting to the current cluster context and running kubeseal
+
+    `dagger call reseal-secret --source=. --kubeconfig=file:~/.kube/config --output=deploy/sealed-secret.yaml`
+
+### Assemble the deploy manifests
+
+    `dagger call assemble-manifests --source=. "--image=${IMAGE}" "--version=${VERSION}" --output=deploy.yaml`
+
+### Build the docker image
+
+    `dagger call publish --source=. "--image=${IMAGE}" "--version=${VERSION}"`
