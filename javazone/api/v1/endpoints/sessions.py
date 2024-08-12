@@ -39,7 +39,9 @@ def get_session(id: uuid.UUID, db: Session = Depends(get_db)) -> schemas.Session
     "/{id}/join",
     response_model=schemas.Session,
 )
-def join_session(id: uuid.UUID, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)) -> schemas.Session:
+def join_session(
+    id: uuid.UUID, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)
+) -> schemas.Session:
     db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -53,7 +55,9 @@ def join_session(id: uuid.UUID, user: schemas.User = Depends(get_current_user), 
     "/{id}/leave",
     response_model=schemas.Session,
 )
-def leave_session(id: uuid.UUID, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)) -> schemas.Session:
+def leave_session(
+    id: uuid.UUID, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)
+) -> schemas.Session:
     db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")

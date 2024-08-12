@@ -8,7 +8,8 @@ import dagger
 from dagger import dag, function, object_type, Doc
 
 
-RESEAL_SCRIPT = textwrap.dedent("""\
+RESEAL_SCRIPT = textwrap.dedent(
+    """\
     #!/bin/bash
     
     echo "---" > sealed-secret.yaml
@@ -17,7 +18,8 @@ RESEAL_SCRIPT = textwrap.dedent("""\
         kubeseal -ojson | \
         jq '.metadata.labels.app="javazone"' | \
         yq -Poyaml >> sealed-secret.yaml
-""")
+"""
+)
 
 
 @object_type
@@ -33,9 +35,7 @@ class Javazone:
             .with_env_variable("POETRY_VIRTUALENVS_IN_PROJECT", "true")
             .with_file("/app/pyproject.toml", source.file("pyproject.toml"))
             .with_file("/app/poetry.lock", source.file("poetry.lock"))
-            .with_exec(
-                ["poetry", "install", "--only", "main", "--no-root", "--no-interaction"]
-            )
+            .with_exec(["poetry", "install", "--only", "main", "--no-root", "--no-interaction"])
         )
 
     @function
@@ -67,9 +67,10 @@ class Javazone:
             .with_entrypoint(["/app/.venv/bin/python", "-m", "javazone"])
         )
 
-
     @function
-    async def publish(self, source: dagger.Directory, image: str = "ttl.sh/mortenlj-javazone", version: str = "develop") -> list[str]:
+    async def publish(
+        self, source: dagger.Directory, image: str = "ttl.sh/mortenlj-javazone", version: str = "develop"
+    ) -> list[str]:
         """Publish the application container after building and testing it on-the-fly"""
         platforms = [
             dagger.Platform("linux/amd64"),  # a.k.a. x86_64
@@ -86,8 +87,10 @@ class Javazone:
         return await asyncio.gather(*cos)
 
     @function
-    async def assemble_manifests(self, source: dagger.Directory, image: str = "ttl.sh/mortenlj-javazone", version: str = "develop") -> dagger.File:
-        """Assemble manifests """
+    async def assemble_manifests(
+        self, source: dagger.Directory, image: str = "ttl.sh/mortenlj-javazone", version: str = "develop"
+    ) -> dagger.File:
+        """Assemble manifests"""
         template_dir = source.directory("deploy")
         documents = []
         for filepath in await template_dir.entries():
@@ -101,14 +104,12 @@ class Javazone:
                 documents.append(contents)
             else:
                 documents.append("---\n" + contents)
-        return await (
-            source
-            .with_new_file("deploy.yaml", "\n".join(documents))
-            .file("deploy.yaml")
-        )
+        return await source.with_new_file("deploy.yaml", "\n".join(documents)).file("deploy.yaml")
 
     @function
-    async def reseal_secret(self, source: dagger.Directory, kubeconfig: Annotated[dagger.Secret, Doc("kubeconfig file for the cluster")]) -> dagger.File:
+    async def reseal_secret(
+        self, source: dagger.Directory, kubeconfig: Annotated[dagger.Secret, Doc("kubeconfig file for the cluster")]
+    ) -> dagger.File:
         """Reseal the secret, using the kubeconfig file for the cluster"""
         return await (
             dag.container()
