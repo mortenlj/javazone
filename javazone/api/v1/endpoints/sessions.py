@@ -43,8 +43,25 @@ def join_session(id: uuid.UUID, user: schemas.User = Depends(get_current_user), 
     db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
-    db_session.users.append(user)
-    db.commit()
+    if not user in db_session.users:
+        db_session.users.append(user)
+        db.commit()
+    return db_session
+
+
+@router.post(
+    "/{id}/leave",
+    response_model=schemas.Session,
+)
+def leave_session(id: uuid.UUID, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)) -> schemas.Session:
+    db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+    try:
+        db_session.users.remove(user)
+        db.commit()
+    except ValueError:
+        pass
     return db_session
 
 

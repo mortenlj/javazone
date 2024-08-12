@@ -37,3 +37,9 @@ GET http://localhost:3000/api/v1/sessions/fb2193e4-9516-47a7-8741-b84eb3242d4d
 Authorization: Bearer dummy
 
 ###
+
+/// Leave session
+POST http://localhost:3000/api/v1/sessions/fb2193e4-9516-47a7-8741-b84eb3242d4d/leave
+Authorization: Bearer dummy
+
+###
