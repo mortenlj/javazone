@@ -1,0 +1,39 @@
+/// GET all sessions
+GET http://localhost:3000/api/v1/sessions/
+Authorization: Bearer dummy
+
+###
+
+/// Update sessions
+POST http://localhost:3000/api/v1/sessions/
+Authorization: Bearer dummy
+
+###
+
+/// Get current user
+GET http://localhost:3000/api/v1/users/me
+Authorization: Bearer dummy
+
+###
+
+/// Bootstrap user
+POST http://localhost:3000/api/v1/users/
+Authorization: Bearer dummy
+
+{
+  "email": "mortenjo@ifi.uio.no"
+}
+
+###
+
+/// Join session
+POST http://localhost:3000/api/v1/sessions/fb2193e4-9516-47a7-8741-b84eb3242d4d/join
+Authorization: Bearer dummy
+
+###
+
+/// Get session
+GET http://localhost:3000/api/v1/sessions/fb2193e4-9516-47a7-8741-b84eb3242d4d
+Authorization: Bearer dummy
+
+###
