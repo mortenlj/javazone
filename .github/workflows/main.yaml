@@ -10,6 +10,7 @@ on:
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}
+  DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
 
 jobs:
   setup:
