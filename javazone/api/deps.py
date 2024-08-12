@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from javazone.database import get_session, models
 from javazone.security import decode_token
+from javazone.core.config import settings, Mode
 
 LOG = logging.getLogger(__name__)
 
@@ -38,6 +39,9 @@ async def get_current_user(
 
 
 async def get_authenticated_email(token: Annotated[HTTPAuthorizationCredentials, Depends(token_auth_scheme)]):
+    if settings.debug:
+        LOG.warning("Running in debug mode, using %s as authenticated user", settings.oauth.client_id)
+        return settings.oauth.client_id
     try:
         claims = await decode_token(token.credentials)
         return claims["email"]

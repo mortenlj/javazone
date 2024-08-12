@@ -15,6 +15,10 @@ oauth = OAuth()
 
 @asynccontextmanager
 async def init_jwt(app):
+    if settings.debug:
+        LOG.warning("Running in debug mode, using dummy login")
+        yield
+        return
     oauth.register(
         "google",
         client_id=settings.oauth.client_id,
