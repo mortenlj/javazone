@@ -6,9 +6,9 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError
 from sqlalchemy.orm import Session
 
+from javazone.core.config import settings
 from javazone.database import get_session, models
 from javazone.security import decode_token
-from javazone.core.config import settings, Mode
 
 LOG = logging.getLogger(__name__)
 

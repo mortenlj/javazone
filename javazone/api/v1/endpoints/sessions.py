@@ -45,7 +45,7 @@ def join_session(
     db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
-    if not user in db_session.users:
+    if user not in db_session.users:
         db_session.users.append(user)
         db.commit()
     return db_session
