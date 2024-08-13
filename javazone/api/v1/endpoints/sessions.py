@@ -5,7 +5,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 
-from javazone import sleepingpill
+from javazone import sleepingpill, mail
 from javazone.api import schemas
 from javazone.api.deps import get_db, get_current_user
 from javazone.database import models
@@ -40,7 +40,10 @@ def get_session(id: uuid.UUID, db: Session = Depends(get_db)) -> schemas.Session
     response_model=schemas.Session,
 )
 def join_session(
-    id: uuid.UUID, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)
+    id: uuid.UUID,
+    background_tasks: BackgroundTasks,
+    user: schemas.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ) -> schemas.Session:
     db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
@@ -48,6 +51,7 @@ def join_session(
     if user not in db_session.users:
         db_session.users.append(user)
         db.commit()
+        background_tasks.add_task(mail.send_invite, db_session, user)
     return db_session
 
 

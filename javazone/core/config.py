@@ -11,6 +11,10 @@ class Mode(str, Enum):
     RELEASE = "Release"
 
 
+class SendgridSettings(BaseModel):
+    api_key: SecretStr | None = None
+
+
 class DatabaseSettings(BaseModel):
     username: str = None
     password: SecretStr = None
@@ -40,6 +44,7 @@ class Settings(BaseSettings):
     port: int = 3000
     database: DatabaseSettings = Field(default_factory=DatabaseSettings)
     oauth: GoogleOAuthSettings = Field(default_factory=GoogleOAuthSettings)
+    sendgrid: SendgridSettings = Field(default_factory=SendgridSettings)
     year: int = datetime.date.today().year
     root_path: str = ""
 
