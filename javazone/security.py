@@ -2,7 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from authlib.integrations.starlette_client import OAuth
-from jose import jwt
+from authlib.jose import JsonWebToken
 
 from javazone.core.config import settings
 
@@ -31,14 +31,10 @@ async def init_jwt(app):
 async def decode_token(token):
     client = oauth.create_client("google")
     metadata = await client.load_server_metadata()
+    jwt = JsonWebToken(metadata[SUPPORTED_ALGS_KEY])
     jwk_set = await client.fetch_jwk_set()
     LOG.debug("Decoding a token, using these supported algorithms: %r", metadata[SUPPORTED_ALGS_KEY])
     return jwt.decode(
         token,
         jwk_set,
-        algorithms=metadata[SUPPORTED_ALGS_KEY][0],
-        audience=settings.oauth.client_id,
-        options={
-            "verify_at_hash": False,
-        },
     )

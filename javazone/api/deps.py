@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jose import JWTError
+from authlib.jose import JoseError
 from sqlalchemy.orm import Session
 
 from javazone.core.config import settings
@@ -45,7 +45,7 @@ async def get_authenticated_email(token: Annotated[HTTPAuthorizationCredentials,
     try:
         claims = await decode_token(token.credentials)
         return claims["email"]
-    except JWTError as e:
+    except JoseError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials",
