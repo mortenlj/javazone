@@ -10,7 +10,7 @@ python = "^3.12"
 fiaas-logging = "^0.1.1"
 pydantic = "^2.8.2"
 fastapi = "^0.112.0"
-uvicorn = {extras = ["standard"], version = "^0.30.5"}
+uvicorn = {extras = ["standard"], version = "^0.30.6"}
 SQLAlchemy = "^2.0.32"
 pymysql = "^1.1.1"
 pydantic-settings = "^2.4.0"
