@@ -46,6 +46,7 @@ async def get_authenticated_email(token: Annotated[HTTPAuthorizationCredentials,
         claims = await decode_token(token.credentials)
         return claims["email"]
     except JoseError as e:
+        LOG.error("Failed to decode token: %s", e)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials",

@@ -4,7 +4,7 @@
 /// * Go to https://developers.google.com/oauthplayground/
 /// * Select and authorize the scope: https://www.googleapis.com/auth/userinfo.email
 /// * Click "Exchange authorization code for tokens"
-/// * Copy the access token and replace the dummy token below.
+/// * Copy the id token and replace the dummy token below.
 
 
 /// GET all sessions
