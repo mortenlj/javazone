@@ -13,6 +13,7 @@ class Mode(str, Enum):
 
 class SendgridSettings(BaseModel):
     api_key: SecretStr | None = None
+    sender_email: str | None = None
 
 
 class DatabaseSettings(BaseModel):
