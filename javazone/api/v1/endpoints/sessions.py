@@ -5,7 +5,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 
-from javazone import sleepingpill, mail
+from javazone import sleepingpill
 from javazone.api import schemas
 from javazone.api.deps import get_db, get_current_user
 from javazone.database import models
@@ -41,7 +41,6 @@ def get_session(id: uuid.UUID, db: Session = Depends(get_db)) -> schemas.Session
 )
 def join_session(
     id: uuid.UUID,
-    background_tasks: BackgroundTasks,
     user: schemas.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.Session:
@@ -50,8 +49,9 @@ def join_session(
         raise HTTPException(status_code=404, detail="Session not found")
     if user not in db_session.users:
         db_session.users.append(user)
+        eq = models.EmailQueue(user_email=user.email, data=db_session.data, action=models.Action.INVITE)
+        db.add(eq)
         db.commit()
-        background_tasks.add_task(mail.send_invite, db_session, user)
     return db_session
 
 
@@ -67,6 +67,8 @@ def leave_session(
         raise HTTPException(status_code=404, detail="Session not found")
     try:
         db_session.users.remove(user)
+        eq = models.EmailQueue(user_email=user.email, data=db_session.data, action=models.Action.CANCEL)
+        db.add(eq)
         db.commit()
     except ValueError:
         pass

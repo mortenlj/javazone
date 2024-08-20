@@ -1,4 +1,8 @@
-from sqlalchemy import Column, ForeignKey, Table, Text, Uuid, String
+import enum
+import uuid
+from datetime import datetime
+
+from sqlalchemy import Column, ForeignKey, Table, Text, Uuid, String, Enum, DateTime
 from sqlalchemy.orm import relationship
 
 from . import Base
@@ -25,3 +29,20 @@ class User(Base):
 
     email = Column(String(256), unique=True, primary_key=True, nullable=False)
     sessions = relationship("Session", secondary=user_session, back_populates="users")
+
+
+class Action(enum.StrEnum):
+    INVITE = enum.auto()
+    UPDATE = enum.auto()
+    CANCEL = enum.auto()
+
+
+class EmailQueue(Base):
+    __tablename__ = "email_queue"
+
+    id = Column(Uuid(as_uuid=True), unique=True, primary_key=True, nullable=False, default=uuid.uuid4)
+    user_email = Column(String(256), nullable=False)
+    data = Column(Text, nullable=False)
+    action = Column(Enum(Action), nullable=False)
+    scheduled_at = Column(DateTime, nullable=False, default=datetime.now)
+    sent_at = Column(DateTime, nullable=True)

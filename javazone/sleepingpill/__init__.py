@@ -29,7 +29,7 @@ def update_sessions(db: Session):
     needs_update = set()
     added = 0
     for session_id in data:
-        needs_delete.remove(session_id)
+        needs_delete.discard(session_id)
         session_data = json.dumps(data[session_id], indent=None).encode("utf-8")
         session_hash = sha256(session_data).hexdigest()
         LOG.debug("Processing %s (hash: %s)", session_id, session_hash)
@@ -46,7 +46,14 @@ def update_sessions(db: Session):
     for session_id in needs_delete:
         db_session = db_sessions[session_id]
         db.delete(db_session)
+        for user in db_session.users:
+            eq = models.EmailQueue(user_email=user.email, data=db_session.data, action=models.Action.CANCEL)
+            db.add(eq)
+    for db_session in needs_update:
+        for user in db_session.users:
+            eq = models.EmailQueue(user_email=user.email, data=db_session.data, action=models.Action.UPDATE)
+            db.add(eq)
     db.commit()
-    LOG.info("Needs to send updates for %d sessions", len(needs_update))
-    LOG.info("Needs to delete %d sessions", len(needs_delete))
+    LOG.info("Scheduled updates for %d sessions", len(needs_update))
+    LOG.info("Scheduled cancellation for %d sessions", len(needs_delete))
     LOG.info("Added %d new sessions to database", added)
