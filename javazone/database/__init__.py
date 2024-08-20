@@ -1,5 +1,4 @@
 import functools
-from contextlib import asynccontextmanager
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -17,12 +16,6 @@ def init():
     engine = create_engine(settings.database.dsn(), pool_pre_ping=True)
     Base.metadata.create_all(engine)
     return sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
-@asynccontextmanager
-async def init_db(app):
-    init()
-    yield
 
 
 def get_session():

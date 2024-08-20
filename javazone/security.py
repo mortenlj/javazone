@@ -1,5 +1,4 @@
 import logging
-from contextlib import asynccontextmanager
 
 from authlib.integrations.starlette_client import OAuth
 from authlib.jose import JsonWebToken
@@ -13,11 +12,9 @@ LOG = logging.getLogger(__name__)
 oauth = OAuth()
 
 
-@asynccontextmanager
-async def init_jwt(app):
+def init_jwt():
     if settings.debug:
         LOG.warning("Running in debug mode, using dummy login")
-        yield
         return
     oauth.register(
         "google",
@@ -25,7 +22,6 @@ async def init_jwt(app):
         client_secret=settings.oauth.client_secret.get_secret_value(),
         server_metadata_url=GOOGLE_WELL_KNOWN,
     )
-    yield
 
 
 async def decode_token(token):
