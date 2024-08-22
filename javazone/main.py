@@ -14,6 +14,7 @@ from javazone.api import probes
 from javazone.core.config import settings
 from javazone.core.logging import get_log_config
 from javazone.database import init as init_db
+from javazone.mail import process_queue
 from javazone.security import init_jwt
 
 LOG = logging.getLogger(__name__)
@@ -24,16 +25,10 @@ class ExitOnSignal(Exception):
     pass
 
 
-async def my_task():
-    LOG.info("Starting my task")
-    await anyio.sleep(5)
-    LOG.info("My task completed")
-
-
 async def run_repeating_background_task(interval, tg):
     while True:
         await anyio.sleep(interval)
-        tg.start_soon(my_task)
+        tg.start_soon(process_queue)
 
 
 @asynccontextmanager

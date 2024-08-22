@@ -46,3 +46,6 @@ class EmailQueue(Base):
     action = Column(Enum(Action), nullable=False)
     scheduled_at = Column(DateTime, nullable=False, default=datetime.now)
     sent_at = Column(DateTime, nullable=True)
+
+    def __repr__(self):
+        return f"<EmailQueue {self.id} {self.user_email} {self.action} {self.scheduled_at} {self.sent_at}>"
