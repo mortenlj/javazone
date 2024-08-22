@@ -3,7 +3,6 @@ import json
 import logging
 import zoneinfo
 from datetime import datetime, timedelta
-from typing import final
 
 from icalendar import Calendar, Event, vCalAddress, vText, Alarm, vDuration, vUri, vBoolean
 from sendgrid import SendGridAPIClient, Attachment
@@ -72,7 +71,6 @@ def _send_message(eq: EmailQueue, title: str, session_data: dict, invite: Calend
         from_email=settings.sendgrid.sender_email,
         to_emails=eq.user_email,
         subject=title,
-        plain_text_content="plain_text_content here", #  session_data["abstract"],
     )
 
     mime_type = f"text/calendar;method={invite.get("method")}"
@@ -108,7 +106,6 @@ def _create_cancel(session: dict, user_email: str) -> Calendar:
     event.add("transp", "TRANSPARENT")
     event.add("status", "CANCELLED")
 
-    _add_organizer(event)
     _add_attendee(event, user_email)
 
     cal.add_component(event)
@@ -127,7 +124,6 @@ def _create_invite(session: dict, user_email: str) -> Calendar:
     event.add("transp", "OPAQUE")
     event.add("status", "CONFIRMED")
 
-    _add_organizer(event)
     _add_attendee(event, user_email)
     _add_url(event, session)
 
@@ -161,15 +157,9 @@ def _add_common_props(event, session):
     event.add("description", session["abstract"])
 
 
-def _add_organizer(event):
-    organizer = vCalAddress(f"MAILTO:{settings.sendgrid.sender_email}")
-    organizer.params["CN"] = vText("JavaZone Calendar Manager")
-    event.add("organizer", organizer, encode=0)
-
-
 def _add_attendee(event, user_email):
     attendee = vCalAddress(f"MAILTO:{user_email}")
-    attendee.params["ROLE"] = vText('REQ-PARTICIPANT')
+    attendee.params["ROLE"] = vText("REQ-PARTICIPANT")
     attendee.params["PARTSTAT"] = vText("NEEDS-ACTION")
     attendee.params["RSVP"] = vBoolean(False)
     event.add("attendee", attendee, encode=0)
@@ -180,9 +170,7 @@ def _add_url(event, session):
     event.add("url", url)
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     session = {
         "id": "1234",
         "title": "Test session title",
