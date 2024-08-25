@@ -56,17 +56,17 @@ def send_cancel(eq: EmailQueue):
     LOG.info("Sending cancel to %s for session %s", eq.user_email, session_data["id"])
     invite = _create_cancel(session_data, eq.user_email)
     title = f"Cancelled: {session_data['title']}"
-    _send_message(eq, title, session_data, invite)
+    _send_message(eq, title, invite)
 
 
 def send_invite(eq: EmailQueue):
     session_data = json.loads(eq.data)
     LOG.info("Sending invite to %s for session %s", eq.user_email, session_data["id"])
     invite = _create_invite(session_data, eq.user_email)
-    _send_message(eq, session_data["title"], session_data, invite)
+    _send_message(eq, session_data["title"], invite)
 
 
-def _send_message(eq: EmailQueue, title: str, session_data: dict, invite: Calendar):
+def _send_message(eq: EmailQueue, title: str, invite: Calendar):
     message = Mail(
         from_email=settings.sendgrid.sender_email,
         to_emails=eq.user_email,
