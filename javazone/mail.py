@@ -145,10 +145,10 @@ def _make_description(session):
     description = textwrap.dedent(
         f"""\
     {session["abstract"]}
-    
+
     Speakers: {", ".join(s["name"] for s in session["speakers"])}
     Room: {session["room"]}
-    
+
     More info: {_make_url(session)}
     """
     )
