@@ -82,7 +82,7 @@ def _send_message(eq: EmailQueue, title: str, invite: Calendar):
     message.add_attachment(attachment)
 
     if not _send_enabled():
-        LOG.debug("Would have sent email %s", message)
+        LOG.info("Send is disabled! Would have sent email %s", message)
         LOG.debug("iCalendar:\n%s", bytes.decode("utf-8"))
         return
     sg = SendGridAPIClient(settings.sendgrid.api_key.get_secret_value())
