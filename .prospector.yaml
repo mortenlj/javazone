@@ -33,3 +33,7 @@ vulture:
 
 pep257:
   run: false
+
+pycodestyle:
+  disable:
+    - W293
