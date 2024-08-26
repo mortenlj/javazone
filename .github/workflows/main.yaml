@@ -10,7 +10,6 @@ on:
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}
-  DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
 
 jobs:
   setup:
@@ -37,6 +36,7 @@ jobs:
       pull-requests: write
     env:
       VERSION: "${{ needs.setup.outputs.VERSION }}"
+      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - name: Login to GitHub Packages Docker Registry
