@@ -1,6 +1,7 @@
 import base64
 import json
 import logging
+import textwrap
 import zoneinfo
 from datetime import datetime, timedelta
 
@@ -140,6 +141,20 @@ def _create_invite(session: dict, user_email: str) -> Calendar:
     return cal
 
 
+def _make_description(session):
+    description = textwrap.dedent(
+        f"""\
+    {session["abstract"]}
+    
+    Speakers: {", ".join(s["name"] for s in session["speakers"])}
+    Room: {session["room"]}
+    
+    More info: {_make_url(session)}
+    """
+    )
+    return description
+
+
 def _create_calendar(method):
     cal = Calendar()
     cal.add("prodid", "-//JavaZone Calendar Manager//javazone.ibidem.no//")
@@ -154,7 +169,7 @@ def _add_common_props(event, session):
     event.add("dtstart", _create_date(session["startTime"]))
     event.add("dtend", _create_date(session["endTime"]))
     event.add("class", "PUBLIC")
-    event.add("description", session["abstract"])
+    event.add("description", _make_description(session))
 
 
 def _add_attendee(event, user_email):
@@ -166,8 +181,12 @@ def _add_attendee(event, user_email):
 
 
 def _add_url(event, session):
-    url = vUri(f"https://{settings.year}.javazone.no/program/{session['id']}")
-    event.add("url", url)
+    uri = vUri(_make_url(session))
+    event.add("url", uri)
+
+
+def _make_url(session):
+    return f"https://{settings.year}.javazone.no/program/{session['id']}"
 
 
 if __name__ == "__main__":
