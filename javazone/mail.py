@@ -1,10 +1,8 @@
 import base64
 import logging
-import textwrap
-import zoneinfo
-from datetime import datetime, timedelta
+from datetime import datetime
 
-from icalendar import Calendar, Event, vCalAddress, vText, Alarm, vDuration, vUri, vBoolean
+from icalendar import Calendar, vCalAddress, vText, vBoolean
 from sendgrid import SendGridAPIClient, Attachment
 from sendgrid.helpers.mail import Mail
 from sqlalchemy import select
@@ -13,6 +11,7 @@ from javazone.api import schemas
 from javazone.core.config import settings
 from javazone.database import models, get_session
 from javazone.database.models import EmailQueue
+from javazone.ics import create_calendar
 
 LOG = logging.getLogger(__name__)
 
@@ -91,83 +90,22 @@ def _send_message(eq: EmailQueue, title: str, invite: Calendar):
         raise SendgridException(f"Failed to send email: {response.status_code} {response.body}")
 
 
-def _replace_tz(dt: datetime) -> datetime:
-    return dt.replace(tzinfo=zoneinfo.ZoneInfo("Europe/Oslo"))
-
-
 def _create_cancel(session: schemas.Session, user_email: str) -> Calendar:
-    cal = _create_calendar("CANCEL")
-
-    event = Event()
-    _add_common_props(event, session)
-
-    event.add("priority", 1)
-    event.add("transp", "TRANSPARENT")
-    event.add("status", "CANCELLED")
-
+    cal = create_calendar("CANCEL")
+    event = session.event(status="CANCELLED", transparency="TRANSPARENT", priority=1)
     _add_attendee(event, user_email)
-
     cal.add_component(event)
 
     return cal
 
 
 def _create_invite(session: schemas.Session, user_email: str) -> Calendar:
-    cal = _create_calendar("REQUEST")
-
-    event = Event()
-    _add_common_props(event, session)
-
-    event.add("location", session.room)
-    event.add("priority", 5)
-    event.add("transp", "OPAQUE")
-    event.add("status", "CONFIRMED")
-
+    cal = create_calendar("REQUEST")
+    event = session.event(status="CONFIRMED", transparency="OPAQUE", priority=5, with_alarm=True)
     _add_attendee(event, user_email)
-    _add_url(event, session)
-
-    alarm = Alarm()
-    alarm.add("action", "DISPLAY")
-    alarm.add("description", "Reminder")
-    trigger = vDuration(timedelta(minutes=-15))
-    trigger.params["related"] = "START"
-    alarm.add("trigger", trigger)
-
-    event.add_component(alarm)
     cal.add_component(event)
 
     return cal
-
-
-def _make_description(session: schemas.Session):
-    description = textwrap.dedent(
-        f"""\
-    {session.abstract}
-    
-    Speakers: {", ".join(s["name"] for s in session.speakers)}
-    Room: {session.room}
-    
-    More info: {_make_url(session)}
-    """
-    )
-    return description
-
-
-def _create_calendar(method):
-    cal = Calendar()
-    cal.add("prodid", "-//JavaZone Calendar Manager//javazone.ibidem.no//")
-    cal.add("version", "2.0")
-    cal.add("method", method)
-    return cal
-
-
-def _add_common_props(event, session: schemas.Session):
-    event.add("uid", session.id)
-    event.add("summary", session.title)
-    event.add("dtstart", _replace_tz(session.start_time))
-    event.add("dtend", _replace_tz(session.end_time))
-    event.add("class", "PUBLIC")
-    event.add("description", _make_description(session))
 
 
 def _add_attendee(event, user_email):
@@ -176,15 +114,6 @@ def _add_attendee(event, user_email):
     attendee.params["PARTSTAT"] = vText("NEEDS-ACTION")
     attendee.params["RSVP"] = vBoolean(False)
     event.add("attendee", attendee, encode=0)
-
-
-def _add_url(event, session: schemas.Session):
-    uri = vUri(_make_url(session))
-    event.add("url", uri)
-
-
-def _make_url(session: schemas.Session):
-    return f"https://{settings.year}.javazone.no/program/{session.id}"
 
 
 if __name__ == "__main__":

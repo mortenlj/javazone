@@ -1,11 +1,16 @@
-from datetime import datetime
+import textwrap
+import zoneinfo
+from datetime import datetime, timedelta
 from typing import List, Optional
 from uuid import UUID
 
+from icalendar import Event, vUri, Alarm, vDuration
 from pydantic import ConfigDict
 from pydantic.alias_generators import to_camel
 from pydantic.main import BaseModel
 from pydantic_core import Url
+
+from javazone.sleepingpill import make_url
 
 
 class UserBase(BaseModel):
@@ -39,6 +44,52 @@ class Session(BaseModel):
     register_loc: Optional[Url] = None
     start_slot: datetime
     speakers: list[dict]
+
+    @property
+    def description(self) -> str:
+        description = textwrap.dedent(
+            f"""\
+        {self.abstract}
+        
+        Speakers: {", ".join(s["name"] for s in self.speakers)}
+        Room: {self.room}
+        
+        More info: {make_url(self.id)}
+        """
+        )
+        return description
+
+    def event(self, *, status=None, transparency=None, priority=None, with_alarm=False) -> Event:
+        event = Event()
+        event.add("uid", self.id)
+        event.add("summary", self.title)
+        event.add("dtstart", self.start_time.replace(tzinfo=zoneinfo.ZoneInfo("Europe/Oslo")))
+        event.add("dtend", self.end_time.replace(tzinfo=zoneinfo.ZoneInfo("Europe/Oslo")))
+        event.add("class", "PUBLIC")
+        event.add("description", self.description)
+        event.add("location", self.room)
+
+        uri = vUri(make_url(self.id))
+        event.add("url", uri)
+
+        if priority is not None:
+            event.add("priority", priority)
+        if transparency is not None:
+            event.add("transp", transparency)
+        if status is not None:
+            event.add("status", status)
+
+        if with_alarm:
+            alarm = Alarm()
+            alarm.add("action", "DISPLAY")
+            alarm.add("description", "Reminder")
+            trigger = vDuration(timedelta(minutes=-15))
+            trigger.params["related"] = "START"
+            alarm.add("trigger", trigger)
+
+            event.add_component(alarm)
+
+        return event
 
 
 class SessionWithUsers(Session):

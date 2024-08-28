@@ -1,17 +1,23 @@
 import uuid
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Response
+from icalendar import Calendar
 from sqlalchemy.orm import Session
 
 from javazone import sleepingpill
 from javazone.api import schemas
 from javazone.api.deps import get_db, get_current_user
 from javazone.database import models
+from javazone.ics import create_calendar
 
 router = APIRouter(
     responses={404: {"detail": "Not found"}},
 )
+
+
+class CalendarResponse(Response):
+    media_type = "text/calendar; method=PUBLISH"
 
 
 @router.get(
@@ -21,6 +27,19 @@ router = APIRouter(
 def get_sessions(db: Session = Depends(get_db)) -> list[schemas.Session]:
     """List all sessions"""
     return [schemas.Session.model_validate_json(s.data) for s in db.query(models.Session).all()]
+
+
+@router.get(
+    ".ics",
+    response_model=None,
+    response_class=CalendarResponse,
+)
+def get_sessions_ics(db: Session = Depends(get_db)) -> Calendar:
+    """Return calendar with all sessions"""
+    cal = create_calendar("PUBLISH")
+    for session in (schemas.Session.model_validate_json(s.data) for s in db.query(models.Session).all()):
+        cal.add_component(session.event())
+    return cal.to_ical()
 
 
 @router.get(
