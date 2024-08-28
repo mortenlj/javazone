@@ -1,4 +1,3 @@
-import json
 import uuid
 from typing import List
 
@@ -17,33 +16,34 @@ router = APIRouter(
 
 @router.get(
     "/",
-    response_model=List[dict],
+    response_model=List[schemas.Session],
 )
-def get_sessions(db: Session = Depends(get_db)) -> list[dict]:
+def get_sessions(db: Session = Depends(get_db)) -> list[schemas.Session]:
     """List all sessions"""
-    return [json.loads(s.data) for s in db.query(models.Session).all()]
+    return [schemas.Session.model_validate_json(s.data) for s in db.query(models.Session).all()]
 
 
 @router.get(
     "/{id}",
     response_model=schemas.Session,
 )
-def get_session(id: uuid.UUID, db: Session = Depends(get_db)) -> schemas.Session:
+def get_session(id: uuid.UUID, db: Session = Depends(get_db)) -> schemas.SessionWithUsers:
     db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
-    return db_session
+    return schemas.Session.model_validate_json(db_session.data)
 
 
 @router.post(
     "/{id}/join",
-    response_model=schemas.Session,
+    response_model=schemas.SessionWithUsers,
+    response_model_exclude_unset=True,
 )
 def join_session(
     id: uuid.UUID,
     user: schemas.User = Depends(get_current_user),
     db: Session = Depends(get_db),
-) -> schemas.Session:
+) -> schemas.SessionWithUsers:
     db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -52,16 +52,17 @@ def join_session(
         eq = models.EmailQueue(user_email=user.email, data=db_session.data, action=models.Action.INVITE)
         db.add(eq)
         db.commit()
-    return db_session
+    return schemas.SessionWithUsers.from_db_session(db_session)
 
 
 @router.post(
     "/{id}/leave",
-    response_model=schemas.Session,
+    response_model=schemas.SessionWithUsers,
+    response_model_exclude_unset=True,
 )
 def leave_session(
     id: uuid.UUID, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)
-) -> schemas.Session:
+) -> schemas.SessionWithUsers:
     db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -72,7 +73,7 @@ def leave_session(
         db.commit()
     except ValueError:
         pass
-    return db_session
+    return schemas.SessionWithUsers.from_db_session(db_session)
 
 
 @router.post("/", name="Update sessions", status_code=204)
