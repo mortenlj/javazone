@@ -15,7 +15,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/",
+    "",
     response_model=List[schemas.Session],
 )
 def get_sessions(db: Session = Depends(get_db)) -> list[schemas.Session]:
@@ -76,6 +76,6 @@ def leave_session(
     return schemas.SessionWithUsers.from_db_session(db_session)
 
 
-@router.post("/", name="Update sessions", status_code=204)
+@router.post("", name="Update sessions", status_code=204)
 def update_sessions(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     background_tasks.add_task(sleepingpill.update_sessions, db)
