@@ -94,3 +94,35 @@ spec:
           dnsPolicy: ClusterFirst
           restartPolicy: Never
   schedule: "10 4 6 1-5,10-12 *"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  labels:
+    app: javazone
+  name: javazone-process-email-queue
+  namespace: default
+spec:
+  concurrencyPolicy: Replace
+  jobTemplate:
+    metadata:
+      labels:
+        app: javazone
+    spec:
+      template:
+        metadata:
+          labels:
+            app: javazone
+        spec:
+          containers:
+            - image: "busybox"
+              imagePullPolicy: IfNotPresent
+              name: javazone
+              args:
+                - "wget"
+                - "--post-data"
+                - ""
+                - "http://javazone/api/v1/email_queue"
+          dnsPolicy: ClusterFirst
+          restartPolicy: Never
+  schedule: "*/10 * 1-20 * *"

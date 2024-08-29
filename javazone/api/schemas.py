@@ -74,7 +74,7 @@ class Session(SessionId):
         event.add("url", uri)
 
         if url_for:
-            event.add("description", f"{self.description}\n\nJoin here: {url_for(self.id)}")
+            event.add("description", f"{self.description}\n\n{url_for(self.id)}")
         else:
             event.add("description", self.description)
 

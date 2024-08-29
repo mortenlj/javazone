@@ -6,6 +6,8 @@ from icalendar import Calendar, vCalAddress, vText, vBoolean
 from sendgrid import SendGridAPIClient, Attachment
 from sendgrid.helpers.mail import Mail
 from sqlalchemy import select
+from sqlalchemy.orm import Session
+from fastapi import Request
 
 from javazone.api import schemas
 from javazone.core.config import settings
@@ -24,32 +26,29 @@ def _send_enabled():
     return settings.sendgrid.api_key is not None and settings.sendgrid.sender_email is not None
 
 
-async def process_queue():
-    db = get_session()
-    try:
-        stmt = select(EmailQueue).where(EmailQueue.sent_at.is_(None)).order_by(EmailQueue.scheduled_at).limit(10)
-        for eq in db.scalars(stmt):
-            LOG.debug("Processing email queue item %r", eq)
-            session = schemas.Session.model_validate_json(eq.data)
-            match eq.action:
-                case models.Action.INVITE:
-                    send_invite(eq, session)
-                case models.Action.CANCEL:
-                    send_cancel(eq, session)
-                case models.Action.UPDATE:
-                    send_update(eq, session)
-                case _:
-                    LOG.error("Unknown action %r", eq.action)
-                    continue
-            eq.sent_at = datetime.now()
-            db.add(eq)
-            db.commit()
-    finally:
-        db.close()
+async def process_queue(req: Request, db: Session):
+    url_for = lambda i: f"Leave here: {req.url_for('leave_session', id=i)}"
+    stmt = select(EmailQueue).where(EmailQueue.sent_at.is_(None)).order_by(EmailQueue.scheduled_at).limit(10)
+    for eq in db.scalars(stmt):
+        LOG.debug("Processing email queue item %r", eq)
+        session = schemas.Session.model_validate_json(eq.data)
+        match eq.action:
+            case models.Action.INVITE:
+                send_invite(eq, session, url_for)
+            case models.Action.CANCEL:
+                send_cancel(eq, session)
+            case models.Action.UPDATE:
+                send_update(eq, session, url_for)
+            case _:
+                LOG.error("Unknown action %r", eq.action)
+                continue
+        eq.sent_at = datetime.now()
+        db.add(eq)
+        db.commit()
 
 
-def send_update(eq, session):
-    send_invite(eq, session)
+def send_update(eq, session, url_for):
+    send_invite(eq, session, url_for)
 
 
 def send_cancel(eq: EmailQueue, session: schemas.Session):
@@ -59,9 +58,9 @@ def send_cancel(eq: EmailQueue, session: schemas.Session):
     _send_message(eq, title, invite)
 
 
-def send_invite(eq: EmailQueue, session: schemas.Session):
+def send_invite(eq: EmailQueue, session: schemas.Session, url_for):
     LOG.info("Sending invite to %s for session %s", eq.user_email, session.id)
-    invite = _create_invite(session, eq.user_email)
+    invite = _create_invite(session, eq.user_email, url_for)
     _send_message(eq, session.title, invite)
 
 
@@ -99,9 +98,9 @@ def _create_cancel(session: schemas.Session, user_email: str) -> Calendar:
     return cal
 
 
-def _create_invite(session: schemas.Session, user_email: str) -> Calendar:
+def _create_invite(session: schemas.Session, user_email: str, url_for) -> Calendar:
     cal = create_calendar("REQUEST")
-    event = session.event(status="CONFIRMED", transparency="OPAQUE", priority=5, with_alarm=True)
+    event = session.event(status="CONFIRMED", transparency="OPAQUE", priority=5, with_alarm=True, url_for=url_for)
     _add_attendee(event, user_email)
     cal.add_component(event)
 
