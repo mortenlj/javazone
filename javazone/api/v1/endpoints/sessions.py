@@ -1,7 +1,7 @@
 import uuid
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Response
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Response, Request
 from icalendar import Calendar
 from sqlalchemy.orm import Session
 
@@ -34,11 +34,11 @@ def get_sessions(db: Session = Depends(get_db)) -> list[schemas.Session]:
     response_model=None,
     response_class=CalendarResponse,
 )
-def get_sessions_ics(db: Session = Depends(get_db)) -> Calendar:
+def get_sessions_ics(req: Request, db: Session = Depends(get_db)) -> Calendar:
     """Return calendar with all sessions"""
     cal = create_calendar("PUBLISH")
     for session in (schemas.Session.model_validate_json(s.data) for s in db.query(models.Session).all()):
-        cal.add_component(session.event())
+        cal.add_component(session.event(url_for=lambda i: req.url_for("join_session", id=i)))
     return cal.to_ical()
 
 
@@ -53,7 +53,7 @@ def get_session(id: uuid.UUID, db: Session = Depends(get_db)) -> schemas.Session
     return schemas.Session.model_validate_json(db_session.data)
 
 
-@router.post(
+@router.get(
     "/{id}/join",
     response_model=schemas.SessionWithUsers,
     response_model_exclude_unset=True,
@@ -74,7 +74,7 @@ def join_session(
     return schemas.SessionWithUsers.from_db_session(db_session)
 
 
-@router.post(
+@router.get(
     "/{id}/leave",
     response_model=schemas.SessionWithUsers,
     response_model_exclude_unset=True,

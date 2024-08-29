@@ -47,30 +47,32 @@ class Session(BaseModel):
 
     @property
     def description(self) -> str:
-        description = textwrap.dedent(
-            f"""\
-        {self.abstract}
+        description = textwrap.dedent(f"""\
+        {self.abstract.replace("\n", "\n        ")}
         
         Speakers: {", ".join(s["name"] for s in self.speakers)}
         Room: {self.room}
         
         More info: {make_url(self.id)}
-        """
-        )
+        """)
         return description
 
-    def event(self, *, status=None, transparency=None, priority=None, with_alarm=False) -> Event:
+    def event(self, *, status=None, transparency=None, priority=None, with_alarm=False, url_for=None) -> Event:
         event = Event()
         event.add("uid", self.id)
         event.add("summary", self.title)
         event.add("dtstart", self.start_time.replace(tzinfo=zoneinfo.ZoneInfo("Europe/Oslo")))
         event.add("dtend", self.end_time.replace(tzinfo=zoneinfo.ZoneInfo("Europe/Oslo")))
         event.add("class", "PUBLIC")
-        event.add("description", self.description)
         event.add("location", self.room)
 
         uri = vUri(make_url(self.id))
         event.add("url", uri)
+
+        if url_for:
+            event.add("description", f"{self.description}\n\nJoin here: {url_for(self.id)}")
+        else:
+            event.add("description", self.description)
 
         if priority is not None:
             event.add("priority", priority)
