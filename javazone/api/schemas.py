@@ -20,16 +20,18 @@ class UserBase(BaseModel):
 
 
 class User(UserBase):
-    sessions: List["Session"]
+    sessions: List["SessionId"]
 
 
-class Session(BaseModel):
+class SessionId(BaseModel):
     model_config = ConfigDict(
         from_attributes=True,
         alias_generator=to_camel,
     )
-
     id: UUID
+
+
+class Session(SessionId):
     conference_id: UUID
     intended_audience: str
     length: int
