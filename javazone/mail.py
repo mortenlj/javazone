@@ -2,16 +2,16 @@ import base64
 import logging
 from datetime import datetime
 
+from fastapi import Request
 from icalendar import Calendar, vCalAddress, vText, vBoolean
 from sendgrid import SendGridAPIClient, Attachment
 from sendgrid.helpers.mail import Mail
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from fastapi import Request
 
 from javazone.api import schemas
 from javazone.core.config import settings
-from javazone.database import models, get_session
+from javazone.database import models
 from javazone.database.models import EmailQueue
 from javazone.ics import create_calendar
 
@@ -27,7 +27,9 @@ def _send_enabled():
 
 
 async def process_queue(req: Request, db: Session):
-    url_for = lambda i: f"Leave here: {req.url_for('leave_session', id=i)}"
+    def url_for(i):
+        return f"Leave here: {req.url_for('leave_session', id=i)}"
+
     stmt = select(EmailQueue).where(EmailQueue.sent_at.is_(None)).order_by(EmailQueue.scheduled_at).limit(10)
     for eq in db.scalars(stmt):
         LOG.debug("Processing email queue item %r", eq)
