@@ -30,7 +30,7 @@ async def process_queue(req: Request, db: Session):
     def url_for(i):
         return f"Leave here: {req.url_for('leave_session', id=i)}"
 
-    stmt = select(EmailQueue).where(EmailQueue.sent_at.is_(None)).order_by(EmailQueue.scheduled_at).limit(10)
+    stmt = select(EmailQueue).where(EmailQueue.sent_at.is_(None)).order_by(EmailQueue.scheduled_at).limit(30)
     for eq in db.scalars(stmt):
         LOG.debug("Processing email queue item %r", eq)
         session = schemas.Session.model_validate_json(eq.data)
