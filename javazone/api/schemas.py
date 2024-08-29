@@ -47,14 +47,16 @@ class Session(BaseModel):
 
     @property
     def description(self) -> str:
-        description = textwrap.dedent(f"""\
+        description = textwrap.dedent(
+            f"""\
         {self.abstract.replace("\n", "\n        ")}
         
         Speakers: {", ".join(s["name"] for s in self.speakers)}
         Room: {self.room}
         
         More info: {make_url(self.id)}
-        """)
+        """
+        )
         return description
 
     def event(self, *, status=None, transparency=None, priority=None, with_alarm=False, url_for=None) -> Event:
