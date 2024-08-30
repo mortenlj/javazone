@@ -125,4 +125,4 @@ spec:
                 - "http://javazone/api/v1/email_queue"
           dnsPolicy: ClusterFirst
           restartPolicy: Never
-  schedule: "*/5 * 1-20 * *"
+  schedule: "*/5 * * 8-9 *"
