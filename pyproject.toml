@@ -23,7 +23,7 @@ icalendar = "^5.0.13"
 anyio = "^4.6.2"
 
 [tool.poetry.group.dev.dependencies]
-setuptools = "^74.1.2"
+setuptools = "^75.1.0"
 pytest = "^8"
 prospector = "^1"
 pytest-cov = "^5"
