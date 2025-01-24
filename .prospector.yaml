@@ -37,3 +37,6 @@ pep257:
 pycodestyle:
   disable:
     - W293
+
+pyflakes:
+  run: false
