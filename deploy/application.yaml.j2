@@ -1,3 +1,4 @@
+
 ---
 apiVersion: yakup.ibidem.no/v1
 kind: Application
@@ -11,6 +12,13 @@ spec:
   ports:
     - kind: http
       port: 3000
+      ingress:
+        - zone: public
+          pathType: Exact
+          paths:
+            - /api/v1/sessions
+            - /api/v1/sessions.ics
+        - zone: authenticated
   probes:
     liveness:
       http:
