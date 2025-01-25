@@ -102,7 +102,7 @@ class Javazone:
                 documents.append(contents)
             else:
                 documents.append("---\n" + contents)
-        return await source.with_new_file("deploy.yaml", "\n".join(documents)).file("deploy.yaml")
+        return await self.source.with_new_file("deploy.yaml", "\n".join(documents)).file("deploy.yaml")
 
     @function
     async def reseal_secret(
