@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   db:
-    image: mariadb@sha256:4a1de8fa2a929944373d7421105500ff6f889ce90dcb883fbb2fdb070e4d427e
+    image: mariadb@sha256:a9547599cd87d7242435aea6fda22a9d83e2c06d16c658ef70d2868b3d3f6a80
     environment:
       MYSQL_ROOT_PASSWORD: root_password
       MYSQL_DATABASE: javazone
