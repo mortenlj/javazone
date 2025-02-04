@@ -28,7 +28,7 @@ pytest = "^8"
 prospector = "^1"
 pytest-cov = "^6.0.0"
 pytest-sugar = "^1.0"
-black = "^24.10.0"
+black = "^25.0.0"
 
 [tool.black]
 line-length = 120
