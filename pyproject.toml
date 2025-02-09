@@ -23,12 +23,12 @@ icalendar = "^6.0.0"
 anyio = "^4.6.2"
 
 [tool.poetry.group.dev.dependencies]
-setuptools = "^75.0.0"
-pytest = "^8"
-prospector = "^1"
-pytest-cov = "^6.0.0"
-pytest-sugar = "^1.0"
-black = "^25.0.0"
+setuptools = "75.8.0"
+pytest = "8.3.4"
+prospector = "1.14.1"
+pytest-cov = "6.0.0"
+pytest-sugar = "1.0.0"
+black = "25.1.0"
 
 [tool.black]
 line-length = 120
