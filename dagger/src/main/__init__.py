@@ -6,7 +6,7 @@ import dagger
 from dagger import dag, function, object_type, DefaultPath, Ignore, Doc
 from jinja2 import Template
 
-PYTHON_VERSION = "3.12"
+PYTHON_VERSION = "3.13"
 RESEAL_SCRIPT = textwrap.dedent(
     """\
     #!/bin/bash

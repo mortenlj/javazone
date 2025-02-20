@@ -12,5 +12,5 @@ run = "git push"
 depends = ["publish"]
 
 [tools]
-python = "3.13.2"
+python = "3.13"
 uv = "latest"
