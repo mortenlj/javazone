@@ -6,6 +6,7 @@ import dagger
 from dagger import dag, function, object_type, DefaultPath, Ignore, Doc
 from jinja2 import Template
 
+PYTHON_VERSION = "3.12"
 RESEAL_SCRIPT = textwrap.dedent(
     """\
     #!/bin/bash
@@ -40,7 +41,7 @@ class Javazone:
             .with_new_file("/usr/local/bin/mise-installer", await installer.contents(), permissions=755)
             .with_exec(["/usr/local/bin/mise-installer"])
             .with_exec(["mise", "trust", "/app/mise.toml"])
-            .with_file("/app/mise.toml", self.source.file(".mise.toml"))
+            .with_file("/app/mise.toml", self.source.file(".config/mise/config.toml"))
             .with_exec(["mise", "install", *tools])
         )
 
@@ -48,7 +49,7 @@ class Javazone:
     @function
     async def deps(self, platform: dagger.Platform | None = None) -> dagger.Container:
         """Install dependencies in a container"""
-        base_container = dag.container(platform=platform).from_("python:3.12-slim").with_workdir("/app")
+        base_container = dag.container(platform=platform).from_(f"python:{PYTHON_VERSION}-slim").with_workdir("/app")
         return (
             (await self.install_mise(platform, base_container, "uv"))
             .with_file("/app/pyproject.toml", self.source.file("pyproject.toml"))
@@ -77,7 +78,7 @@ class Javazone:
         src = await self.build(platform)
         return (
             dag.container(platform=platform)
-            .from_("python:3.12-slim")
+            .from_(f"python:{PYTHON_VERSION}-slim")
             .with_workdir("/app")
             .with_directory("/app/.venv", deps.directory("/app/.venv"))
             .with_directory("/app/javazone", src.directory("/app/javazone"))
