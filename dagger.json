@@ -1,6 +1,8 @@
 {
   "name": "javazone",
-  "sdk": "python",
-  "source": "dagger",
-  "engineVersion": "v0.12.4"
+  "engineVersion": "v0.16.1",
+  "sdk": {
+    "source": "python"
+  },
+  "source": "dagger"
 }
