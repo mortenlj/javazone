@@ -5,6 +5,9 @@ dependencies = [
     "jinja2"
 ]
 
+[tool.uv.sources]
+dagger-io = { path = "sdk", editable = true }
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
