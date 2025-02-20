@@ -2,7 +2,8 @@
 name = "main"
 version = "0.0.0"
 dependencies = [
-    "jinja2"
+    "dagger-io",
+    "jinja2",
 ]
 
 [tool.uv.sources]
