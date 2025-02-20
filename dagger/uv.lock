@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.12"
 
 [[package]]
@@ -100,7 +101,8 @@ wheels = [
 
 [[package]]
 name = "dagger-io"
-source = { editable = "sdk" }
+version = "0.16.1"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
     { name = "beartype" },
@@ -112,32 +114,9 @@ dependencies = [
     { name = "rich" },
     { name = "typing-extensions" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "anyio", specifier = ">=3.6.2" },
-    { name = "beartype", specifier = ">=0.18.2" },
-    { name = "cattrs", specifier = ">=22.2.0" },
-    { name = "gql", extras = ["httpx"], specifier = ">=3.5.0" },
-    { name = "opentelemetry-exporter-otlp-proto-http", specifier = ">=1.23.0" },
-    { name = "opentelemetry-sdk", specifier = ">=1.23.0" },
-    { name = "platformdirs", specifier = ">=2.6.2" },
-    { name = "rich", specifier = ">=10.11.0" },
-    { name = "typing-extensions", specifier = ">=4.8.0" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "aiohttp", specifier = ">=3.9.3" },
-    { name = "codegen", editable = "sdk/codegen" },
-    { name = "mypy", specifier = ">=1.8.0" },
-    { name = "pytest", specifier = ">=8.0.2" },
-    { name = "pytest-httpx", specifier = ">=0.30.0" },
-    { name = "pytest-mock", specifier = ">=3.12.0" },
-    { name = "pytest-subprocess", specifier = ">=1.5.0" },
-    { name = "ruff", specifier = ">=0.3.4" },
-    { name = "sphinx", specifier = ">=7.2.6" },
-    { name = "sphinx-rtd-theme", specifier = ">=2.0.0" },
+sdist = { url = "https://files.pythonhosted.org/packages/4a/13/8a45a42903761f833fee5cedf7ef0c40f88a95196426d24fc5514affad88/dagger_io-0.16.1.tar.gz", hash = "sha256:370b53fcef5a7309f7053dff9707c775e882c6454897be6f62a02fba0d4a2bb5", size = 79127 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/36/ba/2f10fc50165b373b5e223fd7f88b1f6d3f55d69ed15238a11a496339a850/dagger_io-0.16.1-py3-none-any.whl", hash = "sha256:e53e8569562120324a59699795cb0bcd3a33f3ee0d72f82102581ea9bf03e442", size = 75845 },
 ]
 
 [[package]]
@@ -274,7 +253,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "dagger-io", editable = "sdk" },
+    { name = "dagger-io" },
     { name = "jinja2" },
 ]
 
