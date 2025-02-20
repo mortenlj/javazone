@@ -19,44 +19,62 @@ RESEAL_SCRIPT = textwrap.dedent(
 """
 )
 
+MISE_FILE_CANDIDATES = [".mise.toml", "mise.toml", ".config/mise.toml"]
 
 @object_type
 class Javazone:
     source: Annotated[dagger.Directory, DefaultPath("/"), Ignore(["target", ".github", "dagger", ".idea"])]
 
-    @function
-    def deps(self, platform: dagger.Platform | None = None) -> dagger.Container:
-        """Install dependencies in a container"""
+    async def install_mise(self, platform: dagger.Platform, container: dagger.Container, *tools) -> dagger.Container:
+        """Install Mise in a container, and install tools"""
+        installer = dag.http("https://mise.run")
         return (
-            dag.container(platform=platform)
-            .from_("python:3.12-slim")
-            .with_workdir("/app")
-            .with_exec(["pip", "install", "poetry"])
-            .with_env_variable("POETRY_VIRTUALENVS_IN_PROJECT", "true")
+            container
+            .with_exec(["apt-get", "update", "--yes"])
+            .with_exec(["apt-get", "install", "--yes", "curl"])
+            .with_env_variable("MISE_DATA_DIR", "/mise")
+            .with_env_variable("MISE_CONFIG_DIR", "/mise")
+            .with_env_variable("MISE_CACHE_DIR", "/mise/cache")
+            .with_env_variable("MISE_INSTALL_PATH", "/usr/local/bin/mise")
+            .with_env_variable("PATH", "/mise/shims:${PATH}", expand=True)
+            .with_new_file("/usr/local/bin/mise-installer", await installer.contents(), permissions=755)
+            .with_exec(["/usr/local/bin/mise-installer"])
+            .with_exec(["mise", "trust", "/app/mise.toml"])
+            .with_file("/app/mise.toml", self.source.file(".mise.toml"))
+            .with_exec(["mise", "install", *tools])
+        )
+
+
+    @function
+    async def deps(self, platform: dagger.Platform | None = None) -> dagger.Container:
+        """Install dependencies in a container"""
+        base_container = dag.container(platform=platform).from_("python:3.12-slim").with_workdir("/app")
+        return (
+            (await self.install_mise(platform, base_container, "uv"))
             .with_file("/app/pyproject.toml", self.source.file("pyproject.toml"))
-            .with_file("/app/poetry.lock", self.source.file("poetry.lock"))
-            .with_exec(["poetry", "install", "--only", "main", "--no-root", "--no-interaction"])
+            .with_file("/app/uv.lock", self.source.file("uv.lock"))
+            .with_exec(["uv", "sync", "--no-install-workspace", "--locked", "--compile-bytecode"])
         )
 
     @function
-    def build(self, platform: dagger.Platform | None = None) -> dagger.Container:
+    async def build(self, platform: dagger.Platform | None = None) -> dagger.Container:
         """Build the application"""
         return (
-            self.deps(platform)
+            (await self.deps(platform))
             .with_file("/app/.prospector.yaml", self.source.file(".prospector.yaml"))
             .with_directory("/app/javazone", self.source.directory("javazone"))
             .with_directory("/app/tests", self.source.directory("tests"))
-            .with_exec(["poetry", "install", "--no-interaction"])
-            .with_exec(["poetry", "run", "black", "--check", "."])
-            .with_exec(["poetry", "run", "prospector"])
-            .with_exec(["poetry", "run", "pytest"])
+            .with_exec(["uv", "sync", "--locked", "--compile-bytecode", "--group=dev"])
+            .with_exec(["uv", "run", "black", "--check", "."])
+            .with_exec(["uv", "run", "prospector"])
+            .with_exec(["uv", "run", "pytest"])
         )
 
     @function
-    def docker(self, platform: dagger.Platform | None = None) -> dagger.Container:
+    async def docker(self, platform: dagger.Platform | None = None) -> dagger.Container:
         """Build the Docker container"""
-        deps = self.deps(platform)
-        src = self.build(platform)
+        deps = await self.deps(platform)
+        src = await self.build(platform)
         return (
             dag.container(platform=platform)
             .from_("python:3.12-slim")
@@ -80,7 +98,7 @@ class Javazone:
             variants = []
             for platform in platforms:
                 variants.append(self.docker(platform))
-            cos.append(manifest.publish(f"{image}:{v}", platform_variants=variants))
+            cos.append(manifest.publish(f"{image}:{v}", platform_variants=await asyncio.gather(*variants)))
 
         return await asyncio.gather(*cos)
 
