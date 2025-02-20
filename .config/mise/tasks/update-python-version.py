@@ -24,9 +24,6 @@ def _update_pyproject(version):
     _update_file("pyproject.toml", r"requires-python = \"~=(\d\.\d+)\"", version)
 
 
-def _update_dagger(version):
-    _update_file("dagger/src/main/__init__.py", r"PYTHON_VERSION = \"(\d.\d+)\"", version)
-
 
 def _update_mise(version):
     print("Telling mise to use the new version ...")
@@ -42,7 +39,6 @@ def main():
     version = os.getenv("usage_version")
     print(f"Updating to Python {version} ...")
     _update_pyproject(version)
-    _update_dagger(version)
     _update_mise(version)
     _sync_uv()
 

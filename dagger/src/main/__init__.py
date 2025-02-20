@@ -1,12 +1,12 @@
 import asyncio
 import textwrap
+import toml
 from typing import Annotated
 
 import dagger
 from dagger import dag, function, object_type, DefaultPath, Ignore, Doc
 from jinja2 import Template
 
-PYTHON_VERSION = "3.13"
 RESEAL_SCRIPT = textwrap.dedent(
     """\
     #!/bin/bash
@@ -20,11 +20,16 @@ RESEAL_SCRIPT = textwrap.dedent(
 """
 )
 
-MISE_FILE_CANDIDATES = [".mise.toml", "mise.toml", ".config/mise.toml"]
-
 @object_type
 class Javazone:
     source: Annotated[dagger.Directory, DefaultPath("/"), Ignore(["target", ".github", "dagger", ".idea"])]
+
+    async def resolve_python_version(self) -> str:
+        """Resolve the Python version"""
+        contents = await self.source.file("pyproject.toml").contents()
+        pyproject = toml.loads(contents)
+        py_version = pyproject["project"]["requires-python"]
+        return py_version[2:]
 
     async def install_mise(self, platform: dagger.Platform, container: dagger.Container, *tools) -> dagger.Container:
         """Install Mise in a container, and install tools"""
@@ -49,7 +54,8 @@ class Javazone:
     @function
     async def deps(self, platform: dagger.Platform | None = None) -> dagger.Container:
         """Install dependencies in a container"""
-        base_container = dag.container(platform=platform).from_(f"python:{PYTHON_VERSION}-slim").with_workdir("/app")
+        python_version = await self.resolve_python_version()
+        base_container = dag.container(platform=platform).from_(f"python:{python_version}-slim").with_workdir("/app")
         return (
             (await self.install_mise(platform, base_container, "uv"))
             .with_file("/app/pyproject.toml", self.source.file("pyproject.toml"))
@@ -74,11 +80,12 @@ class Javazone:
     @function
     async def docker(self, platform: dagger.Platform | None = None) -> dagger.Container:
         """Build the Docker container"""
+        python_version = await self.resolve_python_version()
         deps = await self.deps(platform)
         src = await self.build(platform)
         return (
             dag.container(platform=platform)
-            .from_(f"python:{PYTHON_VERSION}-slim")
+            .from_(f"python:{python_version}-slim")
             .with_workdir("/app")
             .with_directory("/app/.venv", deps.directory("/app/.venv"))
             .with_directory("/app/javazone", src.directory("/app/javazone"))
