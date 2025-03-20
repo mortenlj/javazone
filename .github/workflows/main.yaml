@@ -90,7 +90,7 @@ jobs:
         id: deploy-token
         run: |
           pipx install httpie
-          http --json POST https://api.ibidem.no/api/v1/token/ token="${{ steps.jwt.outputs.github_jwt }}"
+          http --ignore-stdin --json POST https://api.ibidem.no/api/v1/token/ token="${{ steps.jwt.outputs.github_jwt }}"
       - name: Download manifests from build
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4
         with:
