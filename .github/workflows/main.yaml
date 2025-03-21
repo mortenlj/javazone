@@ -84,7 +84,7 @@ jobs:
           
           pipx install httpie
           
-          jwt=$(http --json --auth-type bearer --auth "${$ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api.ibidem.no:deploy" | jq -r '.value')
+          jwt=$(http --json --auth-type bearer --auth "${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "${ACTIONS_ID_TOKEN_REQUEST_URL}" audience=ibidem.no:deploy | jq -r '.value')
           deploy_token=$(http --ignore-stdin --json POST https://api.ibidem.no/api/v1/token/ token="${jwt}" | jq -r '.token')
       - name: Download manifests from build
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4
