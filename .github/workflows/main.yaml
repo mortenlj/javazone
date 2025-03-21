@@ -76,10 +76,10 @@ jobs:
         id: deploy-token
         run: |
           if [ -z "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ] || [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
-          echo "::error::Missing id-token permissions. This must be set either globally in the workflow, or for the specific job performing the deploy."
-          echo "::error::For more info see https://doc.nais.io/build/how-to/build-and-deploy and/or https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs"
-          
-          exit 1
+            echo "::error::Missing id-token permissions. This must be set either globally in the workflow, or for the specific job performing the deploy."
+            echo "::error::For more info see https://doc.nais.io/build/how-to/build-and-deploy and/or https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs"
+            
+            exit 1
           fi
           
           pipx install httpie
