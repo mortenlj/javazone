@@ -72,8 +72,7 @@ jobs:
       - setup
       - build
     steps:
-      - name: Get deploy token
-        id: deploy-token
+      - name: Get kubeconfig
         run: |
           if [ -z "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ] || [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
             echo "::error::Missing id-token permissions. This must be set either globally in the workflow, or for the specific job performing the deploy."
@@ -85,7 +84,8 @@ jobs:
           pipx install httpie
           
           jwt=$(http --ignore-stdin --json --auth-type bearer --auth "${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "${ACTIONS_ID_TOKEN_REQUEST_URL}" "audience==ibidem.no:deploy" | jq -r '.value')
-          deploy_token=$(http --ignore-stdin --json POST https://api.ibidem.no/api/v1/token/ token="${jwt}" | jq -r '.token')
+          http --download --output /tmp/kubectl/kubeconfig --ignore-stdin --json POST https://api.ibidem.no/api/v1/token/ token="${jwt}"
+          echo "KUBECONFIG=/tmp/kubectl/kubeconfig" >> ${GITHUB_ENV}
       - name: Download manifests from build
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4
         with:
@@ -98,8 +98,6 @@ jobs:
           curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
           echo "$(<kubectl.sha256)  kubectl" | sha256sum --check
           chmod +x kubectl
-          echo "${{ secrets.KUBECONFIG }}" > /tmp/kubectl/kubeconfig
-          echo "KUBECONFIG=/tmp/kubectl/kubeconfig" >> ${GITHUB_ENV}
           echo "PATH=/tmp/kubectl:${PATH}" >> ${GITHUB_ENV}
       - id: join-zt
         name: Join ZeroTier network
