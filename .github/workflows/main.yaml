@@ -91,15 +91,6 @@ jobs:
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4
         with:
           name: manifests
-      - name: Install and configure kubectl
-        run: |
-          mkdir -p /tmp/kubectl
-          cd /tmp/kubectl
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
-          echo "$(<kubectl.sha256)  kubectl" | sha256sum --check
-          chmod +x kubectl
-          echo "PATH=/tmp/kubectl:${PATH}" >> ${GITHUB_ENV}
       - id: join-zt
         name: Join ZeroTier network
         uses: mortenlj/zerotier-actions/join-zt@main
