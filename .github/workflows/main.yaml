@@ -85,7 +85,7 @@ jobs:
           
           mkdir -p /tmp/kubectl
           jwt=$(http --ignore-stdin --json --auth-type bearer --auth "${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "${ACTIONS_ID_TOKEN_REQUEST_URL}" "audience==ibidem.no:deploy" | jq -r '.value')
-          http --download --output /tmp/kubectl/kubeconfig --ignore-stdin --json POST https://api.ibidem.no/api/v1/token/ token="${jwt}"
+          http --download --output /tmp/kubectl/kubeconfig --ignore-stdin --json POST https://api.ibidem.no/api/v1/token/kubeconfig token="${jwt}"
           echo "KUBECONFIG=/tmp/kubectl/kubeconfig" >> ${GITHUB_ENV}
       - name: Download manifests from build
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4
