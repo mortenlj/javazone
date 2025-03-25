@@ -475,7 +475,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "black", specifier = "==25.1.0" },
-    { name = "prospector", specifier = "==1.15.3" },
+    { name = "prospector", specifier = "==1.16.0" },
     { name = "pytest", specifier = "==8.3.5" },
     { name = "pytest-cov", specifier = "==6.0.0" },
     { name = "pytest-sugar", specifier = "==1.0.0" },
@@ -562,7 +562,7 @@ wheels = [
 
 [[package]]
 name = "prospector"
-version = "1.15.3"
+version = "1.16.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dodgy" },
@@ -576,15 +576,14 @@ dependencies = [
     { name = "pylint" },
     { name = "pylint-celery" },
     { name = "pylint-django" },
-    { name = "pylint-flask" },
     { name = "pyyaml" },
     { name = "requirements-detector" },
     { name = "setoptconf-tmp" },
     { name = "toml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/59/70/de3f28df1bbe24190eebf0a99eaaa4dab626d5d60d10c8b627998a6258c8/prospector-1.15.3.tar.gz", hash = "sha256:78bf3ff0a46e4b7d95df355d53a34c41e4dd9e24c72ddd01558a273c39df0df6", size = 71504 }
+sdist = { url = "https://files.pythonhosted.org/packages/1e/f5/8458ddeddf677bafd4c0e9014a9d09f28a63b5ee5d9415976b02c1aee640/prospector-1.16.0.tar.gz", hash = "sha256:841aa6093c4a978b7cb8ba5457eec8b0fe069555986300846d74f830acca596c", size = 73212 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0b/f3/3f3cd45e2e3e604547e67eb32c628ff13e64bd09bf93b7030e14e771d4d3/prospector-1.15.3-py3-none-any.whl", hash = "sha256:240e75f9dcb6624574204a997004ef145f615540a00b50ba4203db9a429044f2", size = 92740 },
+    { url = "https://files.pythonhosted.org/packages/d0/23/db3d122fa139952fce62dee294170d8aa9f1d01f1a41307ca58cc8aefe91/prospector-1.16.0-py3-none-any.whl", hash = "sha256:e621db4b7f215e39f98575297e4e61f00134ce0e4fe9b2baf0d6e5aaeff5c9f2", size = 94826 },
 ]
 
 [[package]]
@@ -719,17 +718,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/40/d3/42f88e7549c6d69d9
 wheels = [
     { url = "https://files.pythonhosted.org/packages/1b/82/88b58feecce482e76e4ec4a45e44ed28075fddd82530d071d89466e83529/pylint_django-2.6.1-py3-none-any.whl", hash = "sha256:359f68fe8c810ee6bc8e1ab4c83c19b15a43b234a24b08978f47a23462b5ce28", size = 42858 },
 ]
-
-[[package]]
-name = "pylint-flask"
-version = "0.6"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "astroid" },
-    { name = "pylint" },
-    { name = "pylint-plugin-utils" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/0d/ec/e8c5742985bab80b2fcd0ab429cf6804779d8cfd15264fdad933057d1380/pylint-flask-0.6.tar.gz", hash = "sha256:f4d97de2216bf7bfce07c9c08b166e978fe9f2725de2a50a9845a97de7e31517", size = 9964 }
 
 [[package]]
 name = "pylint-plugin-utils"
