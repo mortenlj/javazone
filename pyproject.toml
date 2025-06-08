@@ -22,7 +22,7 @@ dependencies = [
     "sendgrid<7.0.0,>=6.11.0",
     "icalendar<7.0.0,>=6.0.0",
     "anyio<5.0.0,>=4.6.2",
-    "psycopg>=3.2.9",
+    "psycopg[binary]>=3.2.9",
 ]
 
 [dependency-groups]
