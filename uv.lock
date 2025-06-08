@@ -435,6 +435,7 @@ dependencies = [
     { name = "furl" },
     { name = "httpx" },
     { name = "icalendar" },
+    { name = "psycopg" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pymysql" },
@@ -463,6 +464,7 @@ requires-dist = [
     { name = "furl", specifier = ">=2.1.3,<3.0.0" },
     { name = "httpx", specifier = ">=0.28.0,<1.0.0" },
     { name = "icalendar", specifier = ">=6.0.0,<7.0.0" },
+    { name = "psycopg", specifier = ">=3.2.9" },
     { name = "pydantic", specifier = ">=2.9.2,<3.0.0" },
     { name = "pydantic-settings", specifier = ">=2.6.0,<3.0.0" },
     { name = "pymysql", specifier = ">=1.1.1,<2.0.0" },
@@ -584,6 +586,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/6c/da/95b50aa30d1ad84b7c87569afc5d6aba7534bd97ae5611764b178420f57b/prospector-1.17.1.tar.gz", hash = "sha256:3ea49d2969d876e199bacd337d89a7b0469e25997f20124f3daa59f01efb3111", size = 70918, upload-time = "2025-05-19T13:17:03.681Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/04/63/81362bb7dd6def8936dfe00f3e19b63d735fddc1047c8f31fb2c653b06b0/prospector-1.17.1-py3-none-any.whl", hash = "sha256:da26d4f5c02af4ed38260ddb6dd8d5635f02ae0af8af17dccf20885f672f6ff5", size = 96057, upload-time = "2025-05-19T13:17:01.917Z" },
+]
+
+[[package]]
+name = "psycopg"
+version = "3.2.9"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/27/4a/93a6ab570a8d1a4ad171a1f4256e205ce48d828781312c0bbaff36380ecb/psycopg-3.2.9.tar.gz", hash = "sha256:2fbb46fcd17bc81f993f28c47f1ebea38d66ae97cc2dbc3cad73b37cefbff700", size = 158122, upload-time = "2025-05-13T16:11:15.533Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/44/b0/a73c195a56eb6b92e937a5ca58521a5c3346fb233345adc80fd3e2f542e2/psycopg-3.2.9-py3-none-any.whl", hash = "sha256:01a8dadccdaac2123c916208c96e06631641c0566b22005493f09663c7a8d3b6", size = 202705, upload-time = "2025-05-13T16:06:26.584Z" },
 ]
 
 [[package]]
