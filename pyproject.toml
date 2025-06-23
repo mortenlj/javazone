@@ -29,7 +29,7 @@ dependencies = [
 dev = [
     "setuptools==80.9.0",
     "pytest==8.4.0",
-    "prospector==1.17.1",
+    "prospector==1.17.2",
     "pytest-cov==6.2.1",
     "pytest-sugar==1.0.0",
     "black==25.1.0",

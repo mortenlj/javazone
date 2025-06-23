@@ -477,7 +477,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "black", specifier = "==25.1.0" },
-    { name = "prospector", specifier = "==1.17.1" },
+    { name = "prospector", specifier = "==1.17.2" },
     { name = "pytest", specifier = "==8.4.0" },
     { name = "pytest-cov", specifier = "==6.2.1" },
     { name = "pytest-sugar", specifier = "==1.0.0" },
@@ -564,7 +564,7 @@ wheels = [
 
 [[package]]
 name = "prospector"
-version = "1.17.1"
+version = "1.17.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dodgy" },
@@ -583,9 +583,9 @@ dependencies = [
     { name = "setoptconf-tmp" },
     { name = "toml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6c/da/95b50aa30d1ad84b7c87569afc5d6aba7534bd97ae5611764b178420f57b/prospector-1.17.1.tar.gz", hash = "sha256:3ea49d2969d876e199bacd337d89a7b0469e25997f20124f3daa59f01efb3111", size = 70918, upload-time = "2025-05-19T13:17:03.681Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/12/f7/ffdef5487dd651fac632eec5a5cd0df3008d16a9e901bceedaddb8720f57/prospector-1.17.2.tar.gz", hash = "sha256:44a92f5027bfbac4cc00b2598a773bf2a546067f5a7a6a525e7a1e96a2635a52", size = 71016, upload-time = "2025-06-23T15:31:39.805Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/04/63/81362bb7dd6def8936dfe00f3e19b63d735fddc1047c8f31fb2c653b06b0/prospector-1.17.1-py3-none-any.whl", hash = "sha256:da26d4f5c02af4ed38260ddb6dd8d5635f02ae0af8af17dccf20885f672f6ff5", size = 96057, upload-time = "2025-05-19T13:17:01.917Z" },
+    { url = "https://files.pythonhosted.org/packages/00/12/0e6f5bac93560d88b0a6a50a5d30b2e2b3cfb6d10d413af21275214e272c/prospector-1.17.2-py3-none-any.whl", hash = "sha256:b99206e7f214c3823cff155cd458f507d45beae86b2dbcead2260eda570ed8db", size = 96171, upload-time = "2025-06-23T15:31:38.646Z" },
 ]
 
 [[package]]
