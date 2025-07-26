@@ -3,6 +3,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   labels:
+    app.kubernetes.io/name: javazone
     app: javazone
   name: javazone-update-sessions-september
   namespace: default
@@ -35,6 +36,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   labels:
+    app.kubernetes.io/name: javazone
     app: javazone
   name: javazone-update-sessions-summer
   namespace: default
@@ -43,11 +45,13 @@ spec:
   jobTemplate:
     metadata:
       labels:
+        app.kubernetes.io/name: javazone
         app: javazone
     spec:
       template:
         metadata:
           labels:
+            app.kubernetes.io/name: javazone
             app: javazone
         spec:
           containers:
@@ -67,6 +71,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   labels:
+    app.kubernetes.io/name: javazone
     app: javazone
   name: javazone-update-sessions-else
   namespace: default
@@ -75,11 +80,13 @@ spec:
   jobTemplate:
     metadata:
       labels:
+        app.kubernetes.io/name: javazone
         app: javazone
     spec:
       template:
         metadata:
           labels:
+            app.kubernetes.io/name: javazone
             app: javazone
         spec:
           containers:
@@ -99,6 +106,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   labels:
+    app.kubernetes.io/name: javazone
     app: javazone
   name: javazone-process-email-queue
   namespace: default
@@ -107,11 +115,13 @@ spec:
   jobTemplate:
     metadata:
       labels:
+        app.kubernetes.io/name: javazone
         app: javazone
     spec:
       template:
         metadata:
           labels:
+            app.kubernetes.io/name: javazone
             app: javazone
         spec:
           containers:

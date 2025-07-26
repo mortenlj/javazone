@@ -6,6 +6,7 @@ metadata:
   name: javazone
   namespace: default
   labels:
+    app.kubernetes.io/name: javazone
     app: javazone
 spec:
   image: "{{ image }}:{{ version }}"

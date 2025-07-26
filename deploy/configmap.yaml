@@ -5,6 +5,7 @@ metadata:
   name: javazone
   namespace: default
   labels:
+    app.kubernetes.io/name: javazone
     app: javazone
 data:
   bind_address: "0.0.0.0"
