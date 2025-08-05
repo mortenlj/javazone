@@ -21,7 +21,7 @@ services:
       - "5432:5432"
 
   adminer:
-    image: adminer@sha256:becd3a16f17d537547d613523246125f3dd73effeb109e3cefa6124996bfbbd2
+    image: adminer@sha256:bf0276d97eb8b40786aeb18204eac5862fbc04676703c910d818bde35b85d1fb
     restart: always
     ports:
       - 8080:8080
