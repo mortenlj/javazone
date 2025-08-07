@@ -20,6 +20,7 @@ RESEAL_SCRIPT = textwrap.dedent(
 """
 )
 
+
 @object_type
 class Javazone:
     source: Annotated[dagger.Directory, DefaultPath("/"), Ignore(["target", ".github", "dagger", ".idea"])]
@@ -35,8 +36,7 @@ class Javazone:
         """Install Mise in a container, and install tools"""
         installer = dag.http("https://mise.run")
         return (
-            container
-            .with_exec(["apt-get", "update", "--yes"])
+            container.with_exec(["apt-get", "update", "--yes"])
             .with_exec(["apt-get", "install", "--yes", "curl"])
             .with_env_variable("MISE_DATA_DIR", "/mise")
             .with_env_variable("MISE_CONFIG_DIR", "/mise")
@@ -49,7 +49,6 @@ class Javazone:
             .with_file("/app/mise.toml", self.source.file(".config/mise/config.toml"))
             .with_exec(["mise", "install", *tools])
         )
-
 
     @function
     async def deps(self, platform: dagger.Platform | None = None) -> dagger.Container:
