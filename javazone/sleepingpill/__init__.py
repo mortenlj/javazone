@@ -34,8 +34,8 @@ def update_sessions(db: Session):
     added = 0
     for session_id in data:
         needs_delete.discard(session_id)
-        session_data = json.dumps(data[session_id], indent=None).encode("utf-8")
-        session_hash = sha256(session_data).hexdigest()
+        session_data = json.dumps(data[session_id], indent=None)
+        session_hash = sha256(session_data.encode("utf-8")).hexdigest()
         LOG.debug("Processing %s (hash: %s)", session_id, session_hash)
         db_session = db_sessions.get(session_id)
         if db_session:
