@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
-from javazone.api.deps import get_db
+from javazone.http.deps import get_db
 
 LOG = logging.getLogger(__name__)
 

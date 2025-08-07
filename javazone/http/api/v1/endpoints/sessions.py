@@ -6,8 +6,8 @@ from icalendar import Calendar
 from sqlalchemy.orm import Session
 
 from javazone import sleepingpill
-from javazone.api import schemas
-from javazone.api.deps import get_db, get_current_user
+from javazone.http import schemas
+from javazone.http.deps import get_db, get_current_user
 from javazone.database import models
 from javazone.ics import create_calendar
 

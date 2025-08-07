@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-from javazone.api import schemas
-from javazone.api.deps import get_db, get_current_user, get_authenticated_email
+from javazone.http import schemas
+from javazone.http.deps import get_db, get_current_user, get_authenticated_email
 from javazone.database import models
 
 router = APIRouter(

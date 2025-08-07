@@ -9,7 +9,7 @@ from sendgrid.helpers.mail import Mail
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from javazone.api import schemas
+from javazone.http import schemas
 from javazone.core.config import settings
 from javazone.database import models
 from javazone.database.models import EmailQueue

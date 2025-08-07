@@ -7,11 +7,10 @@ import sys
 import uvicorn
 from fastapi import FastAPI
 
-from javazone import api
-from javazone.api import probes
 from javazone.core.config import settings
 from javazone.core.logging import get_log_config
 from javazone.database import init as init_db
+from javazone.http import include_routers
 from javazone.security import init_jwt
 
 LOG = logging.getLogger(__name__)
@@ -30,8 +29,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title=TITLE, lifespan=lifespan)
-app.include_router(api.router, prefix="/api")
-app.include_router(probes.router, prefix="/_")
+include_routers(app)
 
 
 def main():
