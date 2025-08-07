@@ -40,11 +40,11 @@ class Session(SessionId):
     abstract: str
     title: str
     workshop_prerequisites: Optional[str] = None
-    room: str
-    start_time: datetime
-    end_time: datetime
+    room: Optional[str] = None
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
     register_loc: Optional[Url] = None
-    start_slot: datetime
+    start_slot: Optional[datetime] = None
     speakers: list[dict]
 
     @property
@@ -54,7 +54,7 @@ class Session(SessionId):
         {self.abstract.replace("\n", "\n        ")}
         
         Speakers: {", ".join(s["name"] for s in self.speakers)}
-        Room: {self.room}
+        Room: {self.room or "TBA"}
         
         More info: {make_url(self.id)}
         """
@@ -65,10 +65,14 @@ class Session(SessionId):
         event = Event()
         event.add("uid", self.id)
         event.add("summary", self.title)
-        event.add("dtstart", self.start_time.replace(tzinfo=zoneinfo.ZoneInfo("Europe/Oslo")))
-        event.add("dtend", self.end_time.replace(tzinfo=zoneinfo.ZoneInfo("Europe/Oslo")))
         event.add("class", "PUBLIC")
-        event.add("location", self.room)
+
+        if self.start_time:
+            event.add("dtstart", self.start_time.replace(tzinfo=zoneinfo.ZoneInfo("Europe/Oslo")))
+        if self.end_time:
+            event.add("dtend", self.end_time.replace(tzinfo=zoneinfo.ZoneInfo("Europe/Oslo")))
+        if self.room:
+            event.add("location", self.room)
 
         uri = vUri(make_url(self.id))
         event.add("url", uri)

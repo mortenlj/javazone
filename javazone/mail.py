@@ -61,6 +61,9 @@ def send_cancel(eq: EmailQueue, session: schemas.Session):
 
 
 def send_invite(eq: EmailQueue, session: schemas.Session, url_for):
+    if any(v is None for v in (session.start_time, session.end_time)):
+        LOG.warning("Can't send invite for Session %s (%s), it is missing required fields", session.id, session.title)
+        return
     LOG.info("Sending invite to %s for session %s", eq.user_email, session.id)
     invite = _create_invite(session, eq.user_email, url_for)
     _send_message(eq, session.title, invite)
