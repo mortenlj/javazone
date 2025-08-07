@@ -1,15 +1,5 @@
 version: '3.9'
 services:
-  db:
-    image: mariadb@sha256:2bcbaec92bd9d4f6591bc8103d3a8e6d0512ee2235506e47a2e129d190444405
-    environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: javazone
-      MYSQL_USER: javazone
-      MYSQL_PASSWORD: password
-    ports:
-      - "3306:3306"
-
   pg:
     image: postgres:17@sha256:4d89c904835259bc58876520e56267ca07a4ebd6a027f7814bbbf91b50d685be
     restart: always
