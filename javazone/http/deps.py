@@ -1,9 +1,9 @@
 import logging
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from authlib.jose import JoseError
+from fastapi import Depends, HTTPException, Request, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from javazone.core.config import settings
@@ -22,6 +22,16 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+async def get_user_or_none(request: Request, db: Session = Depends(get_db)):
+    try:
+        token = await token_auth_scheme(request)
+        return await get_current_user(token, db)
+    except HTTPException as e:
+        if e.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN):
+            return None
+        raise
 
 
 async def get_current_user(
