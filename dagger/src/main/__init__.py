@@ -7,6 +7,9 @@ import dagger
 from dagger import dag, function, object_type, DefaultPath, Ignore, Doc
 from jinja2 import Template
 
+DEVELOP_VERSION = "0.1.0-develop"
+DEVELOP_IMAGE_VERSION = "1h"
+
 RESEAL_SCRIPT = textwrap.dedent(
     """\
     #!/bin/bash
@@ -95,7 +98,7 @@ class Javazone:
         )
 
     @function
-    async def publish(self, image: str = "ttl.sh/mortenlj-javazone", version: str = "develop") -> list[str]:
+    async def publish(self, image: str = "ttl.sh/mortenlj-javazone", version: str = DEVELOP_VERSION) -> list[str]:
         """Publish the application container after building and testing it on-the-fly"""
         platforms = [
             dagger.Platform("linux/amd64"),  # a.k.a. x86_64
@@ -103,7 +106,10 @@ class Javazone:
         ]
         cos = []
         manifest = dag.container()
-        for v in ["latest", version]:
+        tags = ["latest", version]
+        if version == DEVELOP_VERSION:
+            tags = [DEVELOP_IMAGE_VERSION]
+        for v in tags:
             variants = []
             for platform in platforms:
                 variants.append(self.docker(platform))
@@ -113,7 +119,7 @@ class Javazone:
 
     @function
     async def assemble_manifests(
-        self, image: str = "ttl.sh/mortenlj-javazone", version: str = "develop"
+        self, image: str = "ttl.sh/mortenlj-javazone", version: str = DEVELOP_VERSION
     ) -> dagger.File:
         """Assemble manifests"""
         template_dir = self.source.directory("deploy")
