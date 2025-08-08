@@ -9,6 +9,16 @@ description = "Publish the project to ttl.sh"
 
 [tasks.push]
 run = "git push"
+description = "Push the project to the remote repository, after publishing to ttl.sh"
+depends = ["publish"]
+
+[tasks.deps]
+run = "docker compose up --remove-orphans --renew-anon-volumes"
+description = "Launch the dependencies in docker compose, for use when running the project locally"
+
+[tasks.docker]
+run = "docker compose --profile ttl up --remove-orphans --renew-anon-volumes"
+description = "Launch javazone in docker compose, after publishing to ttl.sh"
 depends = ["publish"]
 
 [tools]

@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   pg:
     image: postgres:17@sha256:4d89c904835259bc58876520e56267ca07a4ebd6a027f7814bbbf91b50d685be
@@ -15,3 +14,18 @@ services:
     restart: always
     ports:
       - 8080:8080
+
+  javazone:
+    image: ttl.sh/mortenlj-javazone:1h
+    restart: always
+    depends_on:
+      - pg
+    ports:
+      - "3000:3000"
+    env_file:
+      - .debugenv
+    environment:
+      BIND_ADDRESS: "0.0.0.0"
+      DATABASE__URL: postgresql+psycopg://javazone:password@pg:5432/javazone
+    profiles:
+      - ttl
