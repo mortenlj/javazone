@@ -21,6 +21,10 @@ run = "docker compose --profile ttl up --remove-orphans --renew-anon-volumes"
 description = "Launch javazone in docker compose, after publishing to ttl.sh"
 depends = ["publish"]
 
+[tasks.fmt]
+run = "uv run black ."
+description = "Format the project using black"
+
 [tools]
 python = "3.13"
 uv = "latest"
