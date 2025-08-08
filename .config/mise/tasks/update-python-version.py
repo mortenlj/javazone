@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-# TODO: Figure out how to make black ignore these comments that needs to have no whitespace at start
-# MISE description="Update the project to use a newer version of Python"
-# USAGE arg <version> help="The version of Python to use, in the form <major>.<minor>"
+# fmt: off
+#MISE description="Update the project to use a newer version of Python"
+#USAGE arg <version> help="The version of Python to use, in the form <major>.<minor>"
+_DUMMY_ = "This is just to make sure black doesn't format the above comment block: https://github.com/psf/black/issues/1245"
+# fmt: on
 
 import os
 import re
