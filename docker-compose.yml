@@ -16,7 +16,7 @@ services:
       - 8080:8080
 
   javazone:
-    image: ttl.sh/mortenlj-javazone:1h@sha256:d2ad1cd362bf107baa06c1285af60e1e66cd84f503e453bd519b7d57633427bf
+    image: ttl.sh/mortenlj-javazone:1h
     restart: always
     depends_on:
       - pg
