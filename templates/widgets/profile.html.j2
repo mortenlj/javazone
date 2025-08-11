@@ -1,9 +1,10 @@
 <div>
     {% if user %}
-        <i class="bi bi-person-circle" style="font-size: 2rem"></i>
+        <i class="bi bi-question-circle" style="font-size: 2rem"></i>
+        <!-- TODO: Show user name and profile picture -->
+        John Doe &lt;{{ user.email }}&gt;
     {% else %}
-        <a href="{{ url_for("login") }}">
-            <i class="bi bi-question-circle" style="font-size: 2rem"></i>
-        </a>
+        <i class="bi bi-person-circle" style="font-size: 2rem"></i>
+        <a href="{{ url_for("login") }}">Log in</a>
     {% endif %}
 </div>
