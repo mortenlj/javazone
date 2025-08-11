@@ -1,0 +1,9 @@
+<div class="col-2">
+    {% if user %}
+        <i class="bi bi-person-circle" style="font-size: 2rem"></i>
+    {% else %}
+        <a href="{{ url_for("login") }}">
+            <i class="bi bi-question-circle" style="font-size: 2rem"></i>
+        </a>
+    {% endif %}
+</div>

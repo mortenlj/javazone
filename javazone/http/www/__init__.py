@@ -21,5 +21,5 @@ def index(request: Request, user: schemas.User = Depends(get_user_or_none)):
 
 
 @router.get("/login", status_code=status.HTTP_200_OK, response_class=RedirectResponse)
-def login(redirect_url: str = "/"):
-    return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
+def login(request: Request):
+    return RedirectResponse(request.url_for("index"), status_code=status.HTTP_302_FOUND)

@@ -19,15 +19,7 @@
         <div class="container py-4">
             <div class="hstack row">
                 <h1 class="mb-3 col-10"><a class="h1 mb-3" href="/">{{ request.app.title }}</a></h1>
-                <div class="col-2">
-                    {% if user %}
-                        <i class="bi bi-person-circle" style="font-size: 2rem"></i>
-                    {% else %}
-                        <a href="{{ url_for("login") }}?redirect_url={{ request.url }}">
-                            <i class="bi bi-question-circle" style="font-size: 2rem"></i>
-                        </a>
-                    {% endif %}
-                </div>
+                {% include "widgets/profile.html.j2" %}
             </div>
             <div class="hstack row align-items-start py-5" style="min-height: 50vh !important;">
                 <div class="col-10">
