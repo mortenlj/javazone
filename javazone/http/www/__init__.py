@@ -39,7 +39,7 @@ def index(request: Request, db: Session = Depends(get_db)):
         name="index.html.j2",
         context={
             "sessions": sessions,
-        }
+        },
     )
 
 

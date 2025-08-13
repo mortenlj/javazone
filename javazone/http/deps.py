@@ -39,7 +39,9 @@ async def get_current_user(
     return db_user
 
 
-async def get_authenticated_user(token: Annotated[HTTPAuthorizationCredentials, Depends(token_auth_scheme)]) -> schemas.AuthenticatedUser:
+async def get_authenticated_user(
+    token: Annotated[HTTPAuthorizationCredentials, Depends(token_auth_scheme)],
+) -> schemas.AuthenticatedUser:
     if settings.debug:
         LOG.warning("Running in debug mode, using %s as authenticated user", settings.oauth.client_id)
         return schemas.AuthenticatedUser(email=settings.oauth.client_id, name="Debug User")
@@ -52,7 +54,9 @@ async def get_authenticated_user(token: Annotated[HTTPAuthorizationCredentials, 
                 detail=f"Missing email claim in token",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        return schemas.AuthenticatedUser(email=claims["email"], name=claims.get("name", ""), picture_url=claims.get("picture"))
+        return schemas.AuthenticatedUser(
+            email=claims["email"], name=claims.get("name", ""), picture_url=claims.get("picture")
+        )
     except JoseError as e:
         LOG.error("Failed to decode token: %s", e)
         raise HTTPException(
