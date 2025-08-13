@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from javazone.core.config import settings
 from javazone.database import get_session, models
+from javazone.http import schemas
 from javazone.security import decode_token
 
 LOG = logging.getLogger(__name__)
@@ -27,8 +28,8 @@ def get_db():
 async def get_current_user(
     token: Annotated[HTTPAuthorizationCredentials, Depends(token_auth_scheme)], db: Session = Depends(get_db)
 ):
-    email = await get_authenticated_email(token)
-    db_user = db.query(models.User).filter(models.User.email == email).first()
+    user = await get_authenticated_user(token)
+    db_user = db.query(models.User).filter(models.User.email == user.email).first()
     if db_user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -38,13 +39,20 @@ async def get_current_user(
     return db_user
 
 
-async def get_authenticated_email(token: Annotated[HTTPAuthorizationCredentials, Depends(token_auth_scheme)]):
+async def get_authenticated_user(token: Annotated[HTTPAuthorizationCredentials, Depends(token_auth_scheme)]) -> schemas.AuthenticatedUser:
     if settings.debug:
         LOG.warning("Running in debug mode, using %s as authenticated user", settings.oauth.client_id)
-        return settings.oauth.client_id
+        return schemas.AuthenticatedUser(email=settings.oauth.client_id, name="Debug User")
     try:
         claims = await decode_token(token.credentials)
-        return claims["email"]
+        if "email" not in claims:
+            LOG.error("Missing email claim in token: %s", claims)
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"Missing email claim in token",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        return schemas.AuthenticatedUser(email=claims["email"], name=claims.get("name", ""), picture_url=claims.get("picture"))
     except JoseError as e:
         LOG.error("Failed to decode token: %s", e)
         raise HTTPException(

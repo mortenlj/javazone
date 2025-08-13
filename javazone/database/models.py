@@ -28,6 +28,8 @@ class User(Base):
     __tablename__ = "users"
 
     email = Column(String(256), unique=True, primary_key=True, nullable=False)
+    name = Column(String(256), nullable=False, default="")
+    picture_url = Column(String(256), nullable=True)
     sessions = relationship("Session", secondary=user_session, back_populates="users")
 
 

@@ -5,7 +5,7 @@ from typing import List, Optional
 from uuid import UUID
 
 from icalendar import Event, vUri, Alarm, vDuration
-from pydantic import ConfigDict
+from pydantic import ConfigDict, HttpUrl
 from pydantic.alias_generators import to_camel
 from pydantic.main import BaseModel
 from pydantic_core import Url
@@ -16,10 +16,14 @@ from javazone.sleepingpill import make_url
 class UserBase(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+
+class AuthenticatedUser(UserBase):
     email: str
+    name: str = ""
+    picture_url: HttpUrl = ""
 
 
-class User(UserBase):
+class User(AuthenticatedUser):
     sessions: List["SessionId"]
 
 

@@ -2,7 +2,9 @@
 /// Use Google OAuth2 Playground to get a token.
 ///
 /// * Go to https://developers.google.com/oauthplayground/
-/// * Select and authorize the scope: https://www.googleapis.com/auth/userinfo.email
+/// * Select and authorize the scopes:
+///     * https://www.googleapis.com/auth/userinfo.email
+///     * https://www.googleapis.com/auth/userinfo.profile
 /// * Click "Exchange authorization code for tokens"
 /// * Copy the id token and replace the dummy token below.
 
