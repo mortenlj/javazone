@@ -1,0 +1,16 @@
+<div class="container border rounded m-3">
+    <div class="row col-12"><h4>{{ session.title }}</h4></div>
+    <div class="row">
+        <div class="col-3"><h6 class="d-inline">Start:</h6><span class="m-1">{{ session.start_time or "TBD"}}</span></div>
+        <div class="col-3"><h6 class="d-inline">End:</h6><span class="m-1">{{ session.end_time or ""}}</span></div>
+        <div class="col-6"><h6 class="d-inline">Room:</h6><span class="m-1">{{ session.room or "TBD"}}</span></div>
+    </div>
+    <div class="row">
+        <ul class="list-group list-group-horizontal">
+            <li class="list-group-item flex-fill border border-0"><h6 class="d-inline">Speakers:</h6></li>
+            {% for speaker in session.speakers %}
+                <li class="list-group-item flex-fill border border-0">{{ speaker.name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
