@@ -1,6 +1,6 @@
 <div>
     {% if user %}
-        <img src="{{ user.picture_url }}" alt="Profile picture" class="rounded-circle" style="width: 32px; height: 32px;">
+        <img src="{{ user.picture_url or "https://icons.getbootstrap.com/assets/icons/question-circle.svg" }}" alt="Profile picture" class="rounded-circle" style="width: 32px; height: 32px;">
         {{ user.name }}
     {% else %}
         <img src="https://icons.getbootstrap.com/assets/icons/question-circle.svg" class="rounded-circle" style="width: 32px; height: 32px;"></img>

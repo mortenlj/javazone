@@ -20,7 +20,7 @@ class UserBase(BaseModel):
 class AuthenticatedUser(UserBase):
     email: str
     name: str = ""
-    picture_url: HttpUrl = ""
+    picture_url: Optional[HttpUrl] = None
 
 
 class User(AuthenticatedUser):
