@@ -22,6 +22,12 @@ class AuthenticatedUser(UserBase):
     name: str = ""
     picture_url: Optional[HttpUrl] = None
 
+    @property
+    def picture(self) -> str:
+        if self.picture_url:
+            return str(self.picture_url)
+        return "https://icons.getbootstrap.com/assets/icons/question-circle.svg"
+
 
 class User(AuthenticatedUser):
     sessions: List["SessionId"]

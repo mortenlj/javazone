@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 from sqlalchemy.orm import Session
@@ -5,12 +6,15 @@ from sqlalchemy.orm import Session
 from javazone.database import models
 from javazone.http import schemas
 
+LOG = logging.getLogger(__name__)
+
 
 def create_user(user: schemas.AuthenticatedUser, db: Session) -> models.User:
     db_user = models.User(email=user.email, name=user.name, picture_url=str(user.picture_url))
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    LOG.info("Created user %r", user)
     return db_user
 
 
