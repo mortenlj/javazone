@@ -10,7 +10,9 @@ LOG = logging.getLogger(__name__)
 
 
 def create_user(user: schemas.AuthenticatedUser, db: Session) -> models.User:
-    db_user = models.User(email=user.email, name=user.name, picture_url=str(user.picture_url))
+    db_user = models.User(
+        email=user.email, name=user.name, picture_url=str(user.picture_url) if user.picture_url else None
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
