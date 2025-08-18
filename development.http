@@ -38,19 +38,19 @@ Authorization: Bearer dummy
 ###
 
 /// Join session
-GET http://localhost:3000/api/v1/sessions/fb2193e4-9516-47a7-8741-b84eb3242d4d/join
+GET http://localhost:3000/api/v1/sessions/13ff71bb-a685-4477-8ef1-c3a46ddba62b/join
 Authorization: Bearer dummy
 
 ###
 
 /// Get session
-GET http://localhost:3000/api/v1/sessions/fb2193e4-9516-47a7-8741-b84eb3242d4d
+GET http://localhost:3000/api/v1/sessions/13ff71bb-a685-4477-8ef1-c3a46ddba62b
 Authorization: Bearer dummy
 
 ###
 
 /// Leave session
-GET http://localhost:3000/api/v1/sessions/fb2193e4-9516-47a7-8741-b84eb3242d4d/leave
+GET http://localhost:3000/api/v1/sessions/13ff71bb-a685-4477-8ef1-c3a46ddba62b/leave
 Authorization: Bearer dummy
 
 ###
