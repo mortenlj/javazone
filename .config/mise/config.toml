@@ -27,4 +27,5 @@ description = "Format the project using black"
 
 [tools]
 python = "3.13"
+ruff = "latest"
 uv = "latest"

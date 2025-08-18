@@ -1,7 +1,5 @@
-import random
-
 from fastapi import APIRouter, Request, status, Depends
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 

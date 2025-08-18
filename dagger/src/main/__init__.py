@@ -59,7 +59,7 @@ class Javazone:
         python_version = await self.resolve_python_version()
         base_container = dag.container(platform=platform).from_(f"python:{python_version}-slim").with_workdir("/app")
         return (
-            (await self.install_mise(base_container, "uv"))
+            (await self.install_mise(base_container, "uv", "ruff"))
             .with_file("/app/pyproject.toml", self.source.file("pyproject.toml"))
             .with_file("/app/uv.lock", self.source.file("uv.lock"))
             .with_exec(["uv", "sync", "--no-install-workspace", "--locked", "--compile-bytecode"])
@@ -70,13 +70,12 @@ class Javazone:
         """Build the application"""
         return (
             (await self.deps(platform))
-            .with_file("/app/.prospector.yaml", self.source.file(".prospector.yaml"))
             .with_directory("/app/javazone", self.source.directory("javazone"))
             .with_directory("/app/templates", self.source.directory("templates"))
             .with_directory("/app/tests", self.source.directory("tests"))
             .with_exec(["uv", "sync", "--locked", "--compile-bytecode", "--group=dev"])
             .with_exec(["uv", "run", "black", "--check", "."])
-            .with_exec(["uv", "run", "prospector"])
+            .with_exec(["ruff", "check"])
             .with_exec(["uv", "run", "pytest"])
         )
 

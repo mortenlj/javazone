@@ -3,7 +3,7 @@ from pprint import pformat
 from typing import Annotated
 
 from authlib.jose import JoseError
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
@@ -53,7 +53,7 @@ async def get_authenticated_user(
             LOG.error("Missing email claim in token: %s", claims)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f"Missing email claim in token",
+                detail="Missing email claim in token",
                 headers={"WWW-Authenticate": "Bearer"},
             )
         return schemas.AuthenticatedUser(
