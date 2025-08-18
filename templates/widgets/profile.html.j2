@@ -1,9 +1,0 @@
-<div>
-    {% if user %}
-        <img src="{{ user.picture }}" alt="Profile picture" class="rounded-circle" style="width: 32px; height: 32px;">
-        {{ user.name }}
-    {% else %}
-        <img src="https://icons.getbootstrap.com/assets/icons/question-circle.svg" class="rounded-circle" style="width: 32px; height: 32px;"></img>
-        <a href="{{ url_for("login") }}">Log in</a>
-    {% endif %}
-</div>
