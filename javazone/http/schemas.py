@@ -122,6 +122,22 @@ class SessionWithUsers(Session):
         return session
 
 
+class SessionsDay(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    name: str
+    sessions: List[Session] = []
+
+
+class SessionsPage(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    title: str
+    description: str
+    days: List[SessionsDay] = []
+
+
 SessionWithUsers.model_rebuild()
 Session.model_rebuild()
 User.model_rebuild()

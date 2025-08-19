@@ -29,7 +29,7 @@ def sessions(request: Request, db: Session = Depends(get_db)):
         request=request,
         name="sessions.html.j2",
         context={
-            "sessions": _sort_sessions_by_day(all_sessions),
+            "sessions": _make_sessions_page(all_sessions, "All Sessions", "All sessions at the conference"),
         },
     )
 
@@ -44,25 +44,29 @@ def user_sessions(request: Request, user: schemas.User = Depends(get_current_use
         request=request,
         name="sessions.html.j2",
         context={
-            "sessions": _sort_sessions_by_day(sess),
+            "sessions": _make_sessions_page(sess, "My Sessions", "Sessions I am participating in"),
         },
     )
 
 
-def _sort_sessions_by_day(all_sessions):
-    sessions = {
-        "tuesday": [],
-        "wednesday": [],
-        "thursday": [],
-        "TBD": [],
+def _make_sessions_page(all_sessions, title, description):
+    page = schemas.SessionsPage(title=title, description=description)
+    days = {
+        "tuesday": schemas.SessionsDay(id="tuesday", name="Tuesday"),
+        "wednesday": schemas.SessionsDay(id="wednesday", name="Wednesday"),
+        "thursday": schemas.SessionsDay(id="thursday", name="Thursday"),
+        "TBD": schemas.SessionsDay(id="tbd", name="TBD"),
     }
-    for session in all_sessions:
+    for session in sorted(all_sessions, key=lambda s: s.start_time.isoformat() or "9999-12-31T23:59:59"):
         if session.start_time is None:
-            sessions["TBD"].append(session)
+            days["TBD"].sessions.append(session)
         elif session.start_time.weekday() == 1:
-            sessions["tuesday"].append(session)
+            days["tuesday"].sessions.append(session)
         elif session.start_time.weekday() == 2:
-            sessions["wednesday"].append(session)
+            days["wednesday"].sessions.append(session)
         elif session.start_time.weekday() == 3:
-            sessions["thursday"].append(session)
-    return sessions
+            days["thursday"].sessions.append(session)
+    if len(days["TBD"].sessions) < 1:
+        del days["TBD"]
+    page.days.extend(days.values())
+    return page

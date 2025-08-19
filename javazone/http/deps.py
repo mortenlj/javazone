@@ -8,7 +8,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from javazone.core.config import settings
-from javazone.database import get_session, models
+from javazone.database import get_session
 from javazone.http import schemas
 from javazone.security import decode_token
 from javazone.services import users
