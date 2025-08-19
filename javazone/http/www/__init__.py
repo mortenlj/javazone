@@ -29,7 +29,7 @@ def sessions(request: Request, db: Session = Depends(get_db)):
         request=request,
         name="sessions.html.j2",
         context={
-            "sessions": _make_sessions_page(all_sessions, "All Sessions", "All sessions at the conference"),
+            "page": _make_sessions_page(all_sessions, "All Sessions", "All sessions at the conference"),
         },
     )
 
@@ -44,7 +44,7 @@ def user_sessions(request: Request, user: schemas.User = Depends(get_current_use
         request=request,
         name="sessions.html.j2",
         context={
-            "sessions": _make_sessions_page(sess, "My Sessions", "Sessions I am participating in"),
+            "page": _make_sessions_page(sess, "My Sessions", "Sessions I am participating in"),
         },
     )
 
