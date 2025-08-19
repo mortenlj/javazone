@@ -57,7 +57,13 @@ def _make_sessions_page(all_sessions, title, description):
         "thursday": schemas.SessionsDay(id="thursday", name="Thursday"),
         "TBD": schemas.SessionsDay(id="tbd", name="TBD"),
     }
-    for session in sorted(all_sessions, key=lambda s: s.start_time.isoformat() or "9999-12-31T23:59:59"):
+
+    def _key(session):
+        if session.start_time is None:
+            return "9999-12-31T23:59:59"
+        return session.start_time.isoformat()
+
+    for session in sorted(all_sessions, key=_key):
         if session.start_time is None:
             days["TBD"].sessions.append(session)
         elif session.start_time.weekday() == 1:
