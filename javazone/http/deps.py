@@ -11,6 +11,7 @@ from javazone.core.config import settings
 from javazone.database import get_session, models
 from javazone.http import schemas
 from javazone.security import decode_token
+from javazone.services import users
 
 LOG = logging.getLogger(__name__)
 
@@ -30,13 +31,9 @@ async def get_current_user(
     token: Annotated[HTTPAuthorizationCredentials, Depends(token_auth_scheme)], db: Session = Depends(get_db)
 ):
     user = await get_authenticated_user(token)
-    db_user = db.query(models.User).filter(models.User.email == user.email).first()
+    db_user = users.get_user(user, db)
     if db_user is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Unknown user",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        db_user = users.create_user(user, db)
     return db_user
 
 
