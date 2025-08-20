@@ -71,6 +71,26 @@ class Session(SessionId):
         )
         return description
 
+    def start(self) -> str:
+        if self.start_time:
+            return self.start_time.strftime("%H:%M")
+        return "TBA"
+
+    def duration(self) -> str:
+        if self.start_time and self.end_time:
+            delta = self.end_time - self.start_time
+            hours, remainder = divmod(delta.total_seconds(),60*60)
+            minutes, _seconds = divmod(remainder,60)
+            parts = []
+            if hours > 0:
+                parts.append(f"{int(hours)} hours")
+            if minutes > 0:
+                if hours > 0:
+                    parts.append("and")
+                parts.append(f"{int(minutes)} min")
+            return " ".join(parts)
+        return ""
+
     def event(self, *, status=None, transparency=None, priority=None, with_alarm=False, url_for=None) -> Event:
         event = Event()
         event.add("uid", self.id)
