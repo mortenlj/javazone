@@ -22,6 +22,12 @@ class AuthenticatedUser(UserBase):
     name: str = ""
     picture_url: Optional[HttpUrl] = None
 
+    def __eq__(self, other):
+        for field in AuthenticatedUser.model_fields.keys():
+            if getattr(self, field) != getattr(other, field, None):
+                return False
+        return True
+
     @property
     def picture(self) -> str:
         if self.picture_url:
@@ -79,8 +85,8 @@ class Session(SessionId):
     def duration(self) -> str:
         if self.start_time and self.end_time:
             delta = self.end_time - self.start_time
-            hours, remainder = divmod(delta.total_seconds(),60*60)
-            minutes, _seconds = divmod(remainder,60)
+            hours, remainder = divmod(delta.total_seconds(), 60 * 60)
+            minutes, _seconds = divmod(remainder, 60)
             parts = []
             if hours > 0:
                 parts.append(f"{int(hours)} hours")
@@ -133,12 +139,12 @@ class Session(SessionId):
 
 
 class SessionWithUsers(Session):
-    users: List["UserBase"] = []
+    users: List["AuthenticatedUser"] = []
 
     @classmethod
     def from_db_session(cls, db_session):
         session = cls.model_validate_json(db_session.data)
-        session.users = [UserBase.model_validate(u) for u in db_session.users]
+        session.users = [AuthenticatedUser.model_validate(u) for u in db_session.users]
         return session
 
 

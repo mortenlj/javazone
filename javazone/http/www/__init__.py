@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Request, status, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -7,6 +9,9 @@ from javazone.http.deps import get_db, get_current_user
 from .widgets import router as widgets_router
 from .. import schemas
 from ...database import models
+
+
+LOG = logging.getLogger(__name__)
 
 router = APIRouter()
 router.include_router(widgets_router, prefix="/widgets", tags=["widgets"])
@@ -23,13 +28,14 @@ def index(request: Request):
 
 
 @router.get("/sessions", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def sessions(request: Request, db: Session = Depends(get_db)):
-    all_sessions = [schemas.Session.model_validate_json(s.data) for s in db.query(models.Session).all()]
+def sessions(request: Request, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    all_sessions = [schemas.SessionWithUsers.from_db_session(s) for s in db.query(models.Session).all()]
     return templates.TemplateResponse(
         request=request,
         name="sessions.html.j2",
         context={
             "page": _make_sessions_page(all_sessions, "All Sessions", "All sessions at the conference"),
+            "user": user,
         },
     )
 
@@ -37,7 +43,7 @@ def sessions(request: Request, db: Session = Depends(get_db)):
 @router.get("/user/sessions", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
 def user_sessions(request: Request, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
     sess = [
-        schemas.Session.model_validate_json(s.data)
+        schemas.SessionWithUsers.from_db_session(s)
         for s in db.query(models.Session).filter(models.Session.users.any(email=user.email)).all()
     ]
     return templates.TemplateResponse(
@@ -45,6 +51,7 @@ def user_sessions(request: Request, user: schemas.User = Depends(get_current_use
         name="sessions.html.j2",
         context={
             "page": _make_sessions_page(sess, "My Sessions", "Sessions I am participating in"),
+            "user": user,
         },
     )
 

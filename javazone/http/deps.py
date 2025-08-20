@@ -34,7 +34,7 @@ async def get_current_user(
     db_user = users.get_user(user, db)
     if db_user is None:
         db_user = users.create_user(user, db)
-    return db_user
+    return schemas.User.model_validate(db_user)
 
 
 async def get_authenticated_user(

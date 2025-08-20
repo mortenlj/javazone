@@ -3,7 +3,10 @@
     <div class="row">
         <div class="col-2 text-start"><h6 class="d-inline">Start:</h6><span class="m-1">{{ session.start() }}</span></div>
         <div class="col-2 text-start"><h6 class="d-inline">Duration:</h6><span class="m-1">{{ session.duration() }}</span></div>
-        <div class="col-8 text-end"><h6 class="d-inline">Room:</h6><span class="m-1">{{ session.room or "TBD"}}</span></div>
+        <div class="col-6 text-end"><h6 class="d-inline">Room:</h6><span class="m-1">{{ session.room or "TBD"}}</span></div>
+        <div class="col-2 text-end">
+            {% include "widgets/session_join_leave.html.j2" %}
+        </div>
     </div>
     <div class="row">
         <ul class="list-group list-group-horizontal justify-content-start">
