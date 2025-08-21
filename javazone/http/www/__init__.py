@@ -85,7 +85,7 @@ def _make_sessions_page(all_sessions, title, description):
             days[-1].add_session(session)
         else:
             days[session.start_time.weekday() - 1].add_session(session)
-    if len(days[-1].session_blocks) < 1:
+    if len(days[-1].session_slots) < 1:
         del days[-1]
     page.days.extend(days)
     return page

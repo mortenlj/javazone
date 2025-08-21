@@ -159,7 +159,7 @@ class SessionWithUsers(Session):
         return session
 
 
-class SessionsBlock(BaseModel):
+class SessionSlot(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     start_time: datetime
@@ -185,15 +185,15 @@ class SessionsDay(BaseModel):
 
     id: str
     name: str
-    _session_blocks: Dict[datetime, SessionsBlock] = {}
+    _session_slots: Dict[datetime, SessionSlot] = {}
 
     @property
-    def session_blocks(self) -> List[SessionsBlock]:
-        return list(sorted(self._session_blocks.values(), key=lambda block: block.start_time))
+    def session_slots(self) -> List[SessionSlot]:
+        return list(sorted(self._session_slots.values(), key=lambda block: block.start_time))
 
     def add_session(self, session: Session):
-        block = self._session_blocks.setdefault(session.start_time, SessionsBlock(start_time=session.start_time))
-        block.add_session(session)
+        slot = self._session_slots.setdefault(session.start_slot, SessionSlot(start_time=session.start_slot))
+        slot.add_session(session)
 
 
 class SessionsPage(BaseModel):
