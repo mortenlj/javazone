@@ -1,0 +1,45 @@
+{% extends "widgets/session_common.html.j2" %}
+
+{% block content %}
+    <div class="row mb-3">
+        <div class="col-1"></div>
+        <div class="col-10 justify-content-start text-start" style="white-space-collapse: preserve-breaks;">
+            {{ session.abstract | safe }}
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-12 text-center">
+            <h6 class="d-inline">Intended audience:</h6>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-1"></div>
+        <div class="col-10 justify-content-start text-start" style="white-space-collapse: preserve-breaks;">
+            {{ session.intended_audience | safe }}
+        </div>
+        <div class="col-1"></div>
+    </div>
+    {% if session.workshop_prerequisites %}
+    <div class="row mb-3">
+        <div class="col-12 text-center">
+            <h6 class="d-inline">Workshop Prerequisites</h6>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-1"></div>
+        <div class="col-10 justify-content-start text-start" style="white-space-collapse: preserve-breaks;">
+            {{ session.workshop_prerequisites | safe }}
+        </div>
+        <div class="col-1"></div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-12 text-start">
+            <h6 class="d-inline">Speakers:</h6>
+            {% for speaker in session.speakers %}
+                <span class="m-1">{{ speaker.name }}</span>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

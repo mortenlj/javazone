@@ -69,7 +69,7 @@ class Session(SessionId):
         return session
 
     @property
-    def description(self) -> str:
+    def calendar_description(self) -> str:
         description = textwrap.dedent(
             f"""\
         {self.abstract.replace("\n", "\n        ")}
@@ -81,6 +81,12 @@ class Session(SessionId):
         """
         )
         return description
+
+    def language_name(self):
+        return {
+            "en": "English",
+            "no": "Norwegian",
+        }.get(self.language, self.language)
 
     def start(self) -> str:
         if self.start_time:
@@ -119,9 +125,9 @@ class Session(SessionId):
         event.add("url", uri)
 
         if url_for:
-            event.add("description", f"{self.description}\n\n{url_for(self.id)}")
+            event.add("description", f"{self.calendar_description}\n\n{url_for(self.id)}")
         else:
-            event.add("description", self.description)
+            event.add("description", self.calendar_description)
 
         if priority is not None:
             event.add("priority", priority)

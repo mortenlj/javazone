@@ -1,4 +1,5 @@
 import logging
+import uuid
 
 from fastapi import APIRouter, Request, status, Depends
 from fastapi.responses import HTMLResponse
@@ -9,6 +10,7 @@ from javazone.http.deps import get_db, get_current_user
 from .widgets import router as widgets_router
 from .. import schemas
 from ...database import models
+from ...services import sessions
 
 LOG = logging.getLogger(__name__)
 
@@ -26,9 +28,23 @@ def index(request: Request):
     )
 
 
+@router.get("/sessions/{id}", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
+def session(request: Request, id: uuid.UUID, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    session = sessions.get(id, db)
+    return templates.TemplateResponse(
+        request=request,
+        name="session.html.j2",
+        context={
+            "session": schemas.SessionWithUsers.from_db_session(session),
+            "user": user,
+        },
+    )
+
+
+
 @router.get("/sessions", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def sessions(request: Request, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
-    all_sessions = [schemas.SessionWithUsers.from_db_session(s) for s in db.query(models.Session).all()]
+def all_sessions(request: Request, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    all_sessions = [schemas.SessionWithUsers.from_db_session(s) for s in sessions.get_all(db)]
     return templates.TemplateResponse(
         request=request,
         name="sessions.html.j2",

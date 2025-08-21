@@ -1,0 +1,37 @@
+<div class="container border rounded m-2 text-bg-light" id="session-{{ session.id }}">
+    <div class="row">
+        <h5 class="col-11 text-center"
+            hx-target="#session-{{ session.id }}"
+            hx-swap="outerHTML"
+            hx-get="{{ url_for("session_widget", id=session.id) }}{% block query %}{% endblock %}">
+            <a href="{{ url_for("session", id=session.id) }}">
+                {{ session.title }}
+            </a>
+        </h5>
+        <div class="col-1 text-end">
+            {% include "widgets/session_join_leave.html.j2" %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3 text-start">
+            <h6 class="d-inline">Duration:</h6>
+            <span class="m-1">{{ session.duration() }}</span>
+        </div>
+        <div class="col-9 text-end">
+            <h6 class="d-inline">Room:</h6>
+            <span class="m-1">{{ session.room or "TBD" }}</span>
+        </div>
+    </div>
+    {% block content %}
+    {% endblock %}
+    <div class="row">
+        <div class="col-3 text-start">
+            <h6 class="d-inline">Language:</h6>
+            <span class="m-1">{{ session.language_name() }}</span>
+        </div>
+        <div class="col-9 text-end">
+            <h6 class="d-inline">Format:</h6>
+            <span class="m-1">{{ session.format }}</span>
+        </div>
+    </div>
+</div>
