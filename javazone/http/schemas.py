@@ -63,6 +63,11 @@ class Session(SessionId):
     start_slot: Optional[datetime] = None
     speakers: list[dict]
 
+    @classmethod
+    def from_db_session(cls, db_session):
+        session = cls.model_validate_json(db_session.data)
+        return session
+
     @property
     def description(self) -> str:
         description = textwrap.dedent(

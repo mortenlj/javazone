@@ -1,15 +1,16 @@
 import uuid
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Response, Request
+from fastapi import APIRouter, Depends, BackgroundTasks, Response, Request
 from icalendar import Calendar
 from sqlalchemy.orm import Session
 
 from javazone import sleepingpill
+from javazone.database import models
 from javazone.http import schemas
 from javazone.http.deps import get_db, get_current_user
-from javazone.database import models
 from javazone.ics import create_calendar
+from javazone.services import sessions
 
 router = APIRouter(
     responses={404: {"detail": "Not found"}},
@@ -26,7 +27,7 @@ class CalendarResponse(Response):
 )
 def get_sessions(db: Session = Depends(get_db)) -> list[schemas.Session]:
     """List all sessions"""
-    return [schemas.Session.model_validate_json(s.data) for s in db.query(models.Session).all()]
+    return [schemas.Session.model_validate_json(s.data) for s in sessions.get_all(db)]
 
 
 @router.get(
@@ -37,7 +38,7 @@ def get_sessions(db: Session = Depends(get_db)) -> list[schemas.Session]:
 def get_sessions_ics(req: Request, db: Session = Depends(get_db)) -> Calendar:
     """Return calendar with all sessions"""
     cal = create_calendar("PUBLISH")
-    for session in (schemas.Session.model_validate_json(s.data) for s in db.query(models.Session).all()):
+    for session in (schemas.Session.model_validate_json(s.data) for s in sessions.get_all(db)):
         cal.add_component(session.event(url_for=lambda i: f"Join here: {req.url_for("join_session", id=i)}"))
     return cal.to_ical()
 
@@ -47,10 +48,7 @@ def get_sessions_ics(req: Request, db: Session = Depends(get_db)) -> Calendar:
     response_model=schemas.Session,
 )
 def get_session(id: uuid.UUID, db: Session = Depends(get_db)) -> schemas.Session:
-    db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
-    if db_session is None:
-        raise HTTPException(status_code=404, detail="Session not found")
-    return schemas.Session.model_validate_json(db_session.data)
+    return schemas.Session.from_db_session(sessions.get(id, db))
 
 
 @router.get(
@@ -60,18 +58,10 @@ def get_session(id: uuid.UUID, db: Session = Depends(get_db)) -> schemas.Session
 )
 def join_session(
     id: uuid.UUID,
-    user: schemas.User = Depends(get_current_user),
+    user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> schemas.SessionWithUsers:
-    db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
-    if db_session is None:
-        raise HTTPException(status_code=404, detail="Session not found")
-    if user not in db_session.users:
-        db_session.users.append(user)
-        eq = models.EmailQueue(user_email=user.email, data=db_session.data, action=models.Action.INVITE)
-        db.add(eq)
-        db.commit()
-    return schemas.SessionWithUsers.from_db_session(db_session)
+    return schemas.SessionWithUsers.from_db_session(sessions.join(id, user, db))
 
 
 @router.get(
@@ -80,19 +70,9 @@ def join_session(
     response_model_exclude_unset=True,
 )
 def leave_session(
-    id: uuid.UUID, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)
+    id: uuid.UUID, user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
 ) -> schemas.SessionWithUsers:
-    db_session: models.Session = db.query(models.Session).filter(models.Session.id == id).first()
-    if db_session is None:
-        raise HTTPException(status_code=404, detail="Session not found")
-    try:
-        db_session.users.remove(user)
-        eq = models.EmailQueue(user_email=user.email, data=db_session.data, action=models.Action.CANCEL)
-        db.add(eq)
-        db.commit()
-    except ValueError:
-        pass
-    return schemas.SessionWithUsers.from_db_session(db_session)
+    return schemas.SessionWithUsers.from_db_session(sessions.leave(id, user, db))
 
 
 @router.post("", name="Update sessions", status_code=204)

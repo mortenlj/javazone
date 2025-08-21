@@ -1,5 +1,5 @@
 {% if user in session.users %}
-    <a href="#leave" class="btn btn-secondary btn-sm">Leave</a>
+    <button hx-get="{{ url_for("leave_session_widget", id=session.id) }}" hx-swap="outerHTML" class="btn btn-secondary btn-sm">Leave</button>
 {% else %}
-    <a href="#join" class="btn btn-primary btn-sm">Join</a>
+    <button hx-get="{{ url_for("join_session_widget", id=session.id) }}" hx-swap="outerHTML" class="btn btn-primary btn-sm">Join</button>
 {% endif %}
