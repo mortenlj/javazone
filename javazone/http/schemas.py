@@ -1,7 +1,7 @@
 import textwrap
 import zoneinfo
 from datetime import datetime, timedelta
-from typing import List, Optional
+from typing import List, Optional, Dict
 from uuid import UUID
 
 from icalendar import Event, vUri, Alarm, vDuration
@@ -153,12 +153,41 @@ class SessionWithUsers(Session):
         return session
 
 
+class SessionsBlock(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    start_time: datetime
+    _sessions: List[Session] = []
+
+    def start(self) -> str:
+        if self.start_time:
+            return self.start_time.strftime("%H:%M")
+        return "TBA"
+
+    @property
+    def sessions(self) -> List[Session]:
+        return list(sorted(self._sessions, key=lambda session: session.room))
+
+    def add_session(self, session: Session):
+        if session.start_time != self.start_time:
+            raise ValueError("Session start time does not match block start time")
+        self._sessions.append(session)
+
+
 class SessionsDay(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: str
     name: str
-    sessions: List[Session] = []
+    _session_blocks: Dict[datetime, SessionsBlock] = {}
+
+    @property
+    def session_blocks(self) -> List[SessionsBlock]:
+        return list(sorted(self._session_blocks.values(), key=lambda block: block.start_time))
+
+    def add_session(self, session: Session):
+        block = self._session_blocks.setdefault(session.start_time, SessionsBlock(start_time=session.start_time))
+        block.add_session(session)
 
 
 class SessionsPage(BaseModel):

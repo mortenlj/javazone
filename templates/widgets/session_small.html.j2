@@ -1,18 +1,17 @@
-<div class="container border rounded m-3">
+<div class="container border rounded text-bg-light">
     <div class="row col-12"><h5>{{ session.title }}</h5></div>
     <div class="row">
-        <div class="col-2 text-start"><h6 class="d-inline">Start:</h6><span class="m-1">{{ session.start() }}</span></div>
         <div class="col-2 text-start"><h6 class="d-inline">Duration:</h6><span class="m-1">{{ session.duration() }}</span></div>
-        <div class="col-6 text-end"><h6 class="d-inline">Room:</h6><span class="m-1">{{ session.room or "TBD"}}</span></div>
-        <div class="col-2 text-end">
+        <div class="col-7 text-end"><h6 class="d-inline">Room:</h6><span class="m-1">{{ session.room or "TBD"}}</span></div>
+        <div class="col-3 text-end">
             {% include "widgets/session_join_leave.html.j2" %}
         </div>
     </div>
     <div class="row">
         <ul class="list-group list-group-horizontal justify-content-start">
-            <li class="list-group-item flex-fill border border-0 text-end"><h6 class="d-inline">Speakers:</h6></li>
+            <li class="list-group-item flex-fill border border-0 text-end text-bg-light"><h6 class="d-inline">Speakers:</h6></li>
             {% for speaker in session.speakers %}
-                <li class="list-group-item flex-fill border border-0 text-start">{{ speaker.name }}</li>
+                <li class="list-group-item flex-fill border border-0 text-start text-bg-light">{{ speaker.name }}</li>
             {% endfor %}
         </ul>
     </div>

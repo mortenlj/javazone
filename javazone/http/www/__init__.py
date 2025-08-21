@@ -10,7 +10,6 @@ from .widgets import router as widgets_router
 from .. import schemas
 from ...database import models
 
-
 LOG = logging.getLogger(__name__)
 
 router = APIRouter()
@@ -58,28 +57,19 @@ def user_sessions(request: Request, user: schemas.User = Depends(get_current_use
 
 def _make_sessions_page(all_sessions, title, description):
     page = schemas.SessionsPage(title=title, description=description)
-    days = {
-        "tuesday": schemas.SessionsDay(id="tuesday", name="Tuesday"),
-        "wednesday": schemas.SessionsDay(id="wednesday", name="Wednesday"),
-        "thursday": schemas.SessionsDay(id="thursday", name="Thursday"),
-        "TBD": schemas.SessionsDay(id="tbd", name="TBD"),
-    }
+    days = [
+        schemas.SessionsDay(id="tuesday", name="Tuesday"),
+        schemas.SessionsDay(id="wednesday", name="Wednesday"),
+        schemas.SessionsDay(id="thursday", name="Thursday"),
+        schemas.SessionsDay(id="tbd", name="TBD"),
+    ]
 
-    def _key(session):
+    for session in all_sessions:
         if session.start_time is None:
-            return "9999-12-31T23:59:59"
-        return session.start_time.isoformat()
-
-    for session in sorted(all_sessions, key=_key):
-        if session.start_time is None:
-            days["TBD"].sessions.append(session)
-        elif session.start_time.weekday() == 1:
-            days["tuesday"].sessions.append(session)
-        elif session.start_time.weekday() == 2:
-            days["wednesday"].sessions.append(session)
-        elif session.start_time.weekday() == 3:
-            days["thursday"].sessions.append(session)
-    if len(days["TBD"].sessions) < 1:
-        del days["TBD"]
-    page.days.extend(days.values())
+            days[-1].add_session(session)
+        else:
+            days[session.start_time.weekday() - 1].add_session(session)
+    if len(days[-1].session_blocks) < 1:
+        del days[-1]
+    page.days.extend(days)
     return page
