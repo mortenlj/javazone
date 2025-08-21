@@ -2,17 +2,12 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from javazone.http import schemas
-from javazone.http.deps import get_db, get_current_user, get_authenticated_user
+from javazone.http.deps import get_db, get_current_user
 from javazone.services import users
 
 router = APIRouter(
     responses={status.HTTP_404_NOT_FOUND: {"detail": "Not found"}},
 )
-
-
-@router.post("/", response_model=schemas.User, name="Create user", status_code=status.HTTP_201_CREATED)
-def post_user(user: schemas.AuthenticatedUser = Depends(get_authenticated_user), db: Session = Depends(get_db)):
-    return users.create_user(user, db)
 
 
 @router.get("/me", response_model=schemas.User)

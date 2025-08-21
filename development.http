@@ -25,15 +25,6 @@ Authorization: Bearer dummy
 GET http://localhost:3000/api/v1/users/me
 Authorization: Bearer dummy
 
-###
-
-/// Bootstrap user
-POST http://localhost:3000/api/v1/users/
-Authorization: Bearer dummy
-
-{
-  "email": "mortenjo@ifi.uio.no"
-}
 
 ###
 
