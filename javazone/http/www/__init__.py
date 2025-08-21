@@ -29,7 +29,9 @@ def index(request: Request):
 
 
 @router.get("/sessions/{id}", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def session(request: Request, id: uuid.UUID, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
+def session(
+    request: Request, id: uuid.UUID, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)
+):
     session = sessions.get(id, db)
     return templates.TemplateResponse(
         request=request,
@@ -39,7 +41,6 @@ def session(request: Request, id: uuid.UUID, user: schemas.User = Depends(get_cu
             "user": user,
         },
     )
-
 
 
 @router.get("/sessions", status_code=status.HTTP_200_OK, response_class=HTMLResponse)

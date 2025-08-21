@@ -16,7 +16,7 @@ templates = Jinja2Templates(directory="templates")
 
 @router.get("/{id}/join", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
 def join_session_widget(
-        request: Request, id: uuid.UUID, user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
+    request: Request, id: uuid.UUID, user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
 ):
     session = sessions.join(id, user, db)
     return templates.TemplateResponse(
@@ -31,7 +31,7 @@ def join_session_widget(
 
 @router.get("/{id}/leave", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
 def leave_session_widget(
-        request: Request, id: uuid.UUID, user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
+    request: Request, id: uuid.UUID, user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
 ):
     session = sessions.leave(id, user, db)
     return templates.TemplateResponse(
@@ -46,7 +46,11 @@ def leave_session_widget(
 
 @router.get("/{id}", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
 def session_widget(
-        request: Request, id: uuid.UUID, size: str = "small", user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
+    request: Request,
+    id: uuid.UUID,
+    size: str = "small",
+    user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     session = sessions.get(id, db)
     return templates.TemplateResponse(
