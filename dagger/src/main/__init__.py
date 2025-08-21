@@ -37,17 +37,15 @@ class Javazone:
 
     async def install_mise(self, container: dagger.Container, *tools) -> dagger.Container:
         """Install Mise in a container, and install tools"""
-        installer = dag.http("https://mise.run")
+        mise_binary = dag.container().from_("jdxcode/mise:latest").file("/usr/local/bin/mise")
         return (
-            container.with_exec(["apt-get", "update", "--yes"])
-            .with_exec(["apt-get", "install", "--yes", "curl"])
+            container
             .with_env_variable("MISE_DATA_DIR", "/mise")
             .with_env_variable("MISE_CONFIG_DIR", "/mise")
             .with_env_variable("MISE_CACHE_DIR", "/mise/cache")
             .with_env_variable("MISE_INSTALL_PATH", "/usr/local/bin/mise")
             .with_env_variable("PATH", "/mise/shims:${PATH}", expand=True)
-            .with_new_file("/usr/local/bin/mise-installer", await installer.contents(), permissions=755)
-            .with_exec(["/usr/local/bin/mise-installer"])
+            .with_file("/usr/local/bin/mise", mise_binary, permissions=755)
             .with_exec(["mise", "trust", "/app/mise.toml"])
             .with_file("/app/mise.toml", self.source.file(".config/mise/config.toml"))
             .with_exec(["mise", "install", *tools])
