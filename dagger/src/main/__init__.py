@@ -35,9 +35,9 @@ class Javazone:
         py_version = pyproject["project"]["requires-python"]
         return py_version[2:]
 
-    async def install_mise(self, container: dagger.Container, *tools) -> dagger.Container:
+    async def install_mise(self, container: dagger.Container, platform: dagger.Platform | None = None, *tools) -> dagger.Container:
         """Install Mise in a container, and install tools"""
-        mise_binary = dag.container().from_("jdxcode/mise:latest").file("/usr/local/bin/mise")
+        mise_binary = dag.container(platform=platform).from_("jdxcode/mise:latest").file("/usr/local/bin/mise")
         return (
             container
             .with_env_variable("MISE_DATA_DIR", "/mise")
@@ -57,7 +57,7 @@ class Javazone:
         python_version = await self.resolve_python_version()
         base_container = dag.container(platform=platform).from_(f"python:{python_version}-slim").with_workdir("/app")
         return (
-            (await self.install_mise(base_container, "uv", "ruff"))
+            (await self.install_mise(base_container, platform,"uv", "ruff"))
             .with_file("/app/pyproject.toml", self.source.file("pyproject.toml"))
             .with_file("/app/uv.lock", self.source.file("uv.lock"))
             .with_exec(["uv", "sync", "--no-install-workspace", "--locked", "--compile-bytecode"])
