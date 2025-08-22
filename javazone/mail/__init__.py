@@ -1,29 +1,19 @@
-import base64
 import logging
 from datetime import datetime
 
 from fastapi import Request
 from icalendar import Calendar, vCalAddress, vText, vBoolean
-from sendgrid import SendGridAPIClient, Attachment
-from sendgrid.helpers.mail import Mail
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from javazone.http import schemas
-from javazone.core.config import settings
 from javazone.database import models
 from javazone.database.models import EmailQueue
+from javazone.http import schemas
 from javazone.ics import create_calendar
+from javazone.mail import maileroo
+from javazone.mail import sendgrid
 
 LOG = logging.getLogger(__name__)
-
-
-class SendgridException(Exception):
-    pass
-
-
-def _send_enabled():
-    return settings.sendgrid.api_key is not None and settings.sendgrid.sender_email is not None
 
 
 async def process_queue(req: Request, db: Session):
@@ -70,28 +60,12 @@ def send_invite(eq: EmailQueue, session: schemas.Session, url_for):
 
 
 def _send_message(eq: EmailQueue, title: str, invite: Calendar):
-    message = Mail(
-        from_email=settings.sendgrid.sender_email,
-        to_emails=eq.user_email,
-        subject=title,
-    )
-
-    mime_type = f"text/calendar;method={invite.get("method")}"
-    bytes = invite.to_ical()
-    message.add_content(bytes.decode("utf-8"), mime_type)
-
-    file_content = base64.b64encode(bytes).decode("utf-8")
-    attachment = Attachment(file_content=file_content, file_name="event.ics", file_type=mime_type)
-    message.add_attachment(attachment)
-
-    if not _send_enabled():
-        LOG.info("Send is disabled! Would have sent email %s", message)
-        LOG.debug("iCalendar:\n%s", bytes.decode("utf-8"))
-        return
-    sg = SendGridAPIClient(settings.sendgrid.api_key.get_secret_value())
-    response = sg.send(message)
-    if response.status_code < 200 or response.status_code >= 300:
-        raise SendgridException(f"Failed to send email: {response.status_code} {response.body}")
+    if sendgrid.enabled():
+        sendgrid.send_message(eq, title, invite)
+    elif maileroo.enabled():
+        maileroo.send_message(eq, title, invite)
+    else:
+        LOG.error("No email service configured! Cannot send email to %s", eq.user_email)
 
 
 def _create_cancel(session: schemas.Session, user_email: str) -> Calendar:

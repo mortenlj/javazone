@@ -11,7 +11,17 @@ class Mode(str, Enum):
     RELEASE = "Release"
 
 
+class MailProvider(str, Enum):
+    SEND_GRID = "SendGrid"
+    MAILEROO = "Maileroo"
+
+
 class SendgridSettings(BaseModel):
+    api_key: SecretStr | None = None
+    sender_email: str | None = None
+
+
+class MailerooSettings(BaseModel):
     api_key: SecretStr | None = None
     sender_email: str | None = None
 
@@ -43,9 +53,11 @@ class Settings(BaseSettings):
     mode: Mode = Mode.DEBUG
     bind_address: str = "127.0.0.1"
     port: int = 3000
+    mail_provider: MailProvider = MailProvider.MAILEROO
     database: DatabaseSettings = Field(default_factory=DatabaseSettings)
     oauth: GoogleOAuthSettings = Field(default_factory=GoogleOAuthSettings)
     sendgrid: SendgridSettings = Field(default_factory=SendgridSettings)
+    maileroo: MailerooSettings = Field(default_factory=MailerooSettings)
     year: int = datetime.date.today().year
     root_path: str = ""
 
