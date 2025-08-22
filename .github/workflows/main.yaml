@@ -112,3 +112,12 @@ jobs:
           delete-ghost-images: true
           delete-orphaned-images: true
           delete-partial-images: true
+      - name: Cleanup local-build images
+        uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          package: javazone/local-build
+          delete-untagged: true
+          delete-ghost-images: true
+          delete-orphaned-images: true
+          delete-partial-images: false
