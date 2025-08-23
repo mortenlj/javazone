@@ -1,5 +1,6 @@
 import base64
 import logging
+import urllib.error
 
 from icalendar import Calendar
 from sendgrid import Mail, Attachment, SendGridAPIClient
@@ -15,12 +16,12 @@ class SendGridException(Exception):
 
 
 def enabled():
-    return settings.sendgrid.api_key is not None and settings.sendgrid.sender_email is not None
+    return settings.sendgrid.api_key is not None and settings.sender_email is not None
 
 
 def send_message(eq: EmailQueue, title: str, invite: Calendar):
     message = Mail(
-        from_email=settings.sendgrid.sender_email,
+        from_email=settings.sender_email,
         to_emails=eq.user_email,
         subject=title,
     )
@@ -38,6 +39,9 @@ def send_message(eq: EmailQueue, title: str, invite: Calendar):
         LOG.debug("iCalendar:\n%s", bytes.decode("utf-8"))
         return
     sg = SendGridAPIClient(settings.sendgrid.api_key.get_secret_value())
-    response = sg.send(message)
+    try:
+        response = sg.send(message)
+    except urllib.error.HTTPError as e:
+        raise SendGridException(f"HTTP error occurred: {e}") from e
     if response.status_code < 200 or response.status_code >= 300:
         raise SendGridException(f"Failed to send email: {response.status_code} {response.body}")

@@ -12,21 +12,21 @@ class MailerooException(Exception):
 
 
 def enabled():
-    return settings.maileroo.api_key is not None and settings.maileroo.sender_email is not None
+    return settings.maileroo.api_key is not None and settings.sender_email is not None
 
 
 def send_message(eq, title, invite):
     mime_type = f"text/calendar;method={invite.get("method")}"
     bytes = invite.to_ical()
-    body = Attachment.from_content("", bytes.decode("utf-8"), mime_type, inline=True, is_base64=False)
+    inline = Attachment.from_content("event_inline.ics", bytes.decode("utf-8"), mime_type, inline=True, is_base64=False)
     attachment = Attachment.from_content("event.ics", bytes.decode("utf-8"), mime_type)
 
     message = {
-        "from": EmailAddress(settings.sendgrid.sender_email),
+        "from": EmailAddress(settings.sender_email, "JavaZone Calender Manager"),
         "to": EmailAddress(eq.user_email),
         "subject": title,
-        "attachments": [body, attachment],
-        "plain": bytes.decode("utf-8"),
+        "attachments": [inline, attachment],
+        "plain": title,
     }
 
     if not enabled():

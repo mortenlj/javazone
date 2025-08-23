@@ -6,6 +6,8 @@ from icalendar import Calendar, vCalAddress, vText, vBoolean
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from javazone.core import config
+from javazone.core.config import settings
 from javazone.database import models
 from javazone.database.models import EmailQueue
 from javazone.http import schemas
@@ -60,12 +62,12 @@ def send_invite(eq: EmailQueue, session: schemas.Session, url_for):
 
 
 def _send_message(eq: EmailQueue, title: str, invite: Calendar):
-    if sendgrid.enabled():
+    if settings.mail_provider == config.MailProvider.SEND_GRID:
         sendgrid.send_message(eq, title, invite)
-    elif maileroo.enabled():
+    elif settings.mail_provider == config.MailProvider.MAILEROO:
         maileroo.send_message(eq, title, invite)
     else:
-        LOG.error("No email service configured! Cannot send email to %s", eq.user_email)
+        LOG.error("No mail provider selected! Cannot send email to %s", eq.user_email)
 
 
 def _create_cancel(session: schemas.Session, user_email: str) -> Calendar:
