@@ -45,7 +45,7 @@ async def get_authenticated_user(
         return schemas.AuthenticatedUser(email=settings.oauth.client_id, name="Debug User")
     try:
         claims = await decode_token(token.credentials)
-        LOG.info("Decoded token claims:\n%s", pformat(claims))
+        LOG.debug("Decoded token claims:\n%s", pformat(claims))
         if "email" not in claims:
             LOG.error("Missing email claim in token: %s", claims)
             raise HTTPException(
