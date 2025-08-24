@@ -25,7 +25,7 @@ class MailerooSettings(BaseModel):
 
 
 class MailSettings(BaseModel):
-    mail_provider: MailProvider = MailProvider.MAILEROO
+    provider: MailProvider = MailProvider.MAILEROO
     sender_email: str | None = None
 
     sendgrid: SendgridSettings = Field(default_factory=SendgridSettings)

@@ -16,12 +16,12 @@ class SendGridException(Exception):
 
 
 def enabled():
-    return settings.sendgrid.api_key is not None and settings.sender_email is not None
+    return settings.mail.sendgrid.api_key is not None and settings.mail.sender_email is not None
 
 
 def send_message(eq: EmailQueue, title: str, invite: Calendar):
     message = Mail(
-        from_email=settings.sender_email,
+        from_email=settings.mail.sender_email,
         to_emails=eq.user_email,
         subject=title,
     )
@@ -38,7 +38,7 @@ def send_message(eq: EmailQueue, title: str, invite: Calendar):
         LOG.info("Send is disabled! Would have sent email %s", message)
         LOG.debug("iCalendar:\n%s", bytes.decode("utf-8"))
         return
-    sg = SendGridAPIClient(settings.sendgrid.api_key.get_secret_value())
+    sg = SendGridAPIClient(settings.mail.sendgrid.api_key.get_secret_value())
     try:
         response = sg.send(message)
     except urllib.error.HTTPError as e:

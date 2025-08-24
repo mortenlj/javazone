@@ -12,7 +12,7 @@ class MailerooException(Exception):
 
 
 def enabled():
-    return settings.maileroo.api_key is not None and settings.sender_email is not None
+    return settings.mail.maileroo.api_key is not None and settings.mail.sender_email is not None
 
 
 def send_message(eq, title, invite):
@@ -22,7 +22,7 @@ def send_message(eq, title, invite):
     attachment = Attachment.from_content("event.ics", bytes.decode("utf-8"), mime_type)
 
     message = {
-        "from": EmailAddress(settings.sender_email, "JavaZone Calender Manager"),
+        "from": EmailAddress(settings.mail.sender_email, "JavaZone Calender Manager"),
         "to": EmailAddress(eq.user_email),
         "subject": title,
         "attachments": [inline, attachment],
@@ -33,7 +33,7 @@ def send_message(eq, title, invite):
         LOG.info("Send is disabled! Would have sent email %s", message)
         LOG.debug("iCalendar:\n%s", bytes.decode("utf-8"))
         return
-    maileroo = MailerooClient(settings.maileroo.api_key.get_secret_value())
+    maileroo = MailerooClient(settings.mail.maileroo.api_key.get_secret_value())
     try:
         reference_id = maileroo.send_basic_email(message)
         LOG.info("Email sent successfully with reference ID: %s", reference_id)

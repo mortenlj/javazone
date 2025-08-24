@@ -62,9 +62,9 @@ def send_invite(eq: EmailQueue, session: schemas.Session, url_for):
 
 
 def _send_message(eq: EmailQueue, title: str, invite: Calendar):
-    if settings.mail_provider == config.MailProvider.SEND_GRID:
+    if settings.mail.provider == config.MailProvider.SEND_GRID:
         sendgrid.send_message(eq, title, invite)
-    elif settings.mail_provider == config.MailProvider.MAILEROO:
+    elif settings.mail.provider == config.MailProvider.MAILEROO:
         maileroo.send_message(eq, title, invite)
     else:
         LOG.error("No mail provider selected! Cannot send email to %s", eq.user_email)
