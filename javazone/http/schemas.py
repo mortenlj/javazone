@@ -61,6 +61,7 @@ class Session(SessionId):
     end_time: Optional[datetime] = None
     register_loc: Optional[Url] = None
     start_slot: Optional[datetime] = None
+    video: Optional[int] = None
     speakers: list[dict]
 
     @classmethod
@@ -76,11 +77,17 @@ class Session(SessionId):
         
         Speakers: {", ".join(s["name"] for s in self.speakers)}
         Room: {self.room or "TBA"}
+        Video: {self.video_url() or 'Not yet available'}
         
         More info: {make_url(self.id)}
         """
         )
         return description
+
+    def video_url(self) -> Optional[str]:
+        if self.video:
+            return f"https://vimeo.com/{self.video}"
+        return None
 
     def language_name(self):
         return {
