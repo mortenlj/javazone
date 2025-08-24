@@ -26,7 +26,8 @@ def _load_data(year):
 
 
 def update_sessions(db: Session):
-    LOG.info("Updating sessions")
+    LOG.info("Updating sessions to generation %d", settings.update_generation)
+    generation_suffix = f"-gen{settings.update_generation}".encode("utf-8")
     data = _load_data(settings.year)
     db_sessions = {db_session.id: db_session for db_session in db.query(models.Session).all()}
     needs_delete = set(db_sessions.keys())
@@ -35,7 +36,7 @@ def update_sessions(db: Session):
     for session_id in data:
         needs_delete.discard(session_id)
         session_data = json.dumps(data[session_id], indent=None)
-        session_hash = sha256(session_data.encode("utf-8")).hexdigest()
+        session_hash = sha256(session_data.encode("utf-8") + generation_suffix).hexdigest()
         LOG.debug("Processing %s (hash: %s)", session_id, session_hash)
         db_session = db_sessions.get(session_id)
         if db_session:

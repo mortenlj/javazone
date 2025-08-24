@@ -66,6 +66,7 @@ class Settings(BaseSettings):
     mail: MailSettings = Field(default_factory=MailSettings)
     year: int = datetime.date.today().year
     root_path: str = ""
+    update_generation: int = 0
 
     model_config = SettingsConfigDict(env_nested_delimiter="__")
 
