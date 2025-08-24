@@ -13,15 +13,10 @@ class Mode(str, Enum):
 
 class MailProvider(str, Enum):
     SEND_GRID = "SendGrid"
-    MAILEROO = "Maileroo"
     SMTP = "SMTP"
 
 
 class SendgridSettings(BaseModel):
-    api_key: SecretStr | None = None
-
-
-class MailerooSettings(BaseModel):
     api_key: SecretStr | None = None
 
 
@@ -36,7 +31,6 @@ class MailSettings(BaseModel):
     sender_email: str | None = None
 
     sendgrid: SendgridSettings = Field(default_factory=SendgridSettings)
-    maileroo: MailerooSettings = Field(default_factory=MailerooSettings)
     smtp: SmtpSettings = Field(default_factory=SmtpSettings)
 
 
