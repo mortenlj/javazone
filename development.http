@@ -45,3 +45,8 @@ GET http://localhost:3000/api/v1/sessions/13ff71bb-a685-4477-8ef1-c3a46ddba62b/l
 Authorization: Bearer dummy
 
 ###
+
+/// Process email queue
+POST http://localhost:3000/api/v1/email_queue
+
+###
