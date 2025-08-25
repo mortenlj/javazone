@@ -12,8 +12,8 @@ from javazone.database import models
 from javazone.database.models import EmailQueue
 from javazone.http import schemas
 from javazone.ics import create_calendar
-from javazone.mail import maileroo
-from javazone.mail import sendgrid
+from . import sendgrid
+from . import smtp
 
 LOG = logging.getLogger(__name__)
 
@@ -64,8 +64,8 @@ def send_invite(eq: EmailQueue, session: schemas.Session, url_for):
 def _send_message(eq: EmailQueue, title: str, invite: Calendar):
     if settings.mail.provider == config.MailProvider.SEND_GRID:
         sendgrid.send_message(eq, title, invite)
-    elif settings.mail.provider == config.MailProvider.MAILEROO:
-        maileroo.send_message(eq, title, invite)
+    elif settings.mail.provider == config.MailProvider.SMTP:
+        smtp.send_message(eq, title, invite)
     else:
         LOG.error("No mail provider selected! Cannot send email to %s", eq.user_email)
 
