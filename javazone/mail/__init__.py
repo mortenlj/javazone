@@ -20,7 +20,7 @@ LOG = logging.getLogger(__name__)
 
 async def process_queue(req: Request, db: Session):
     def url_for(i):
-        return f"Leave here: {req.url_for('leave_session', id=i)}"
+        return f"Leave here: {req.url_for('leave_session_web', id=i)}"
 
     stmt = select(EmailQueue).where(EmailQueue.sent_at.is_(None)).order_by(EmailQueue.scheduled_at).limit(30)
     for eq in db.scalars(stmt):

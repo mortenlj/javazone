@@ -2,7 +2,7 @@ import logging
 import uuid
 
 from fastapi import APIRouter, Request, status, Depends
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
@@ -41,6 +41,33 @@ def session(
             "user": user,
         },
     )
+
+
+@router.get(
+    "/sessions/{id}/join",
+    status_code=status.HTTP_302_FOUND,
+    response_class=RedirectResponse,
+)
+def join_session_web(
+    request: Request,
+    id: uuid.UUID,
+    user: models.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    sessions.join(id, user, db)
+    return str(request.url_for("session", id=id))
+
+
+@router.get(
+    "/sessions/{id}/leave",
+    status_code=status.HTTP_302_FOUND,
+    response_class=RedirectResponse,
+)
+def leave_session_web(
+    request: Request, id: uuid.UUID, user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    sessions.leave(id, user, db)
+    return str(request.url_for("session", id=id))
 
 
 @router.get("/sessions", status_code=status.HTTP_200_OK, response_class=HTMLResponse)

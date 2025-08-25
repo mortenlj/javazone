@@ -39,7 +39,7 @@ def get_sessions_ics(req: Request, db: Session = Depends(get_db)) -> Calendar:
     """Return calendar with all sessions"""
     cal = create_calendar("PUBLISH")
     for session in (schemas.Session.model_validate_json(s.data) for s in sessions.get_all(db)):
-        cal.add_component(session.event(url_for=lambda i: f"Join here: {req.url_for("join_session", id=i)}"))
+        cal.add_component(session.event(url_for=lambda i: f"Join here: {req.url_for("join_session_web", id=i)}"))
     return cal.to_ical()
 
 
