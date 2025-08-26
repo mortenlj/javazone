@@ -27,7 +27,7 @@ spec:
             - "wget"
             - "--post-data"
             - ""
-            - "http://javazone/api/v1/sessions"
+            - "https://javazone.ibidem.no/api/v1/sessions"
           dnsPolicy: ClusterFirst
           restartPolicy: Never
   schedule: "*/10 * 1-20 9 *"
@@ -62,7 +62,7 @@ spec:
                 - "wget"
                 - "--post-data"
                 - ""
-                - "http://javazone/api/v1/sessions"
+                - "https://javazone.ibidem.no/api/v1/sessions"
           dnsPolicy: ClusterFirst
           restartPolicy: Never
   schedule: "10 5 * 6-8 *"
@@ -97,7 +97,7 @@ spec:
                 - "wget"
                 - "--post-data"
                 - ""
-                - "http://javazone/api/v1/sessions"
+                - "https://javazone.ibidem.no/api/v1/sessions"
           dnsPolicy: ClusterFirst
           restartPolicy: Never
   schedule: "10 4 6 1-5,10-12 *"
@@ -132,7 +132,7 @@ spec:
                 - "wget"
                 - "--post-data"
                 - ""
-                - "http://javazone/api/v1/email_queue"
+                - "https://javazone.ibidem.no/api/v1/email_queue"
           dnsPolicy: ClusterFirst
           restartPolicy: Never
   schedule: "*/5 * * 8-9 *"
