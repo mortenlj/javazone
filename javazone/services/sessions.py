@@ -18,6 +18,19 @@ def get(id: uuid.UUID, db: Session) -> models.Session:
     return db_session
 
 
+def update(id: uuid.UUID, user: models.User, db: Session) -> models.Session:
+    db_session: Optional[models.Session] = db.query(models.Session).filter(models.Session.id == id).first()
+    if db_session is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+    try:
+        eq = models.EmailQueue(user_email=user.email, data=db_session.data, action=models.Action.UPDATE)
+        db.add(eq)
+        db.commit()
+    except ValueError:
+        pass
+    return db_session
+
+
 def join(id: uuid.UUID, user: models.User, db: Session) -> models.Session:
     db_session: Optional[models.Session] = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:

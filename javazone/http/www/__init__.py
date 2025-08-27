@@ -70,6 +70,18 @@ def leave_session_web(
     return str(request.url_for("session", id=id))
 
 
+@router.get(
+    "/sessions/{id}/update",
+    status_code=status.HTTP_302_FOUND,
+    response_class=RedirectResponse,
+)
+def update_session_web(
+    request: Request, id: uuid.UUID, user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    sessions.update(id, user, db)
+    return str(request.url_for("session", id=id))
+
+
 @router.get("/sessions", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
 def all_sessions(request: Request, user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
     all_sessions = [schemas.SessionWithUsers.from_db_session(s) for s in sessions.get_all(db)]

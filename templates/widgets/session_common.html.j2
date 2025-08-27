@@ -1,6 +1,6 @@
 <div class="container border rounded m-2 text-bg-light" id="session-{{ session.id }}">
     <div class="row">
-        <h5 class="col-11 text-center"
+        <h5 class="col-10 text-center"
             hx-target="#session-{{ session.id }}"
             hx-swap="outerHTML"
             hx-get="{{ url_for("session_widget", id=session.id) }}{% block query %}{% endblock %}">
@@ -8,7 +8,7 @@
                 {{ session.title }}
             </a>
         </h5>
-        <div class="col-1 text-end">
+        <div class="col-2 text-end" id="join-leave-{{ session.id }}">
             {% include "widgets/session_join_leave.html.j2" %}
         </div>
     </div>

@@ -1,5 +1,6 @@
 {% if user in session.users %}
-    <button hx-get="{{ url_for("leave_session_widget", id=session.id) }}" hx-swap="outerHTML" class="btn btn-secondary btn-sm">Leave</button>
+    <button hx-get="{{ url_for("leave_session_widget", id=session.id) }}" hx-swap="innerHTML" hx-target="#join-leave-{{ session.id }}" class="btn btn-secondary btn-sm">Leave</button>
+    <button hx-get="{{ url_for("update_session_widget", id=session.id) }}" hx-swap="innerHTML" hx-target="#join-leave-{{ session.id }}" class="btn btn-primary btn-sm">Update</button>
 {% else %}
-    <button hx-get="{{ url_for("join_session_widget", id=session.id) }}" hx-swap="outerHTML" class="btn btn-primary btn-sm">Join</button>
+    <button hx-get="{{ url_for("join_session_widget", id=session.id) }}" hx-swap="innerHTML" hx-target="#join-leave-{{ session.id }}" class="btn btn-primary btn-sm">Join</button>
 {% endif %}

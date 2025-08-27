@@ -14,6 +14,21 @@ router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 
+@router.get("/{id}/update", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
+def update_session_widget(
+    request: Request, id: uuid.UUID, user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    session = sessions.update(id, user, db)
+    return templates.TemplateResponse(
+        request=request,
+        name="widgets/session_join_leave.html.j2",
+        context={
+            "session": session,
+            "user": user,
+        },
+    )
+
+
 @router.get("/{id}/join", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
 def join_session_widget(
     request: Request, id: uuid.UUID, user: models.User = Depends(get_current_user), db: Session = Depends(get_db)
