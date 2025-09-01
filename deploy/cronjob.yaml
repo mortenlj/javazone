@@ -30,7 +30,7 @@ spec:
             - "https://javazone.ibidem.no/api/v1/sessions"
           dnsPolicy: ClusterFirst
           restartPolicy: Never
-  schedule: "*/10 * 1-20 9 *"
+  schedule: "*/11 * 1-20 9 *"
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -135,4 +135,4 @@ spec:
                 - "https://javazone.ibidem.no/api/v1/email_queue"
           dnsPolicy: ClusterFirst
           restartPolicy: Never
-  schedule: "*/5 * * 8-9 *"
+  schedule: "*/3 * * 8-9 *"
