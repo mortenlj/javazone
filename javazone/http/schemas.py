@@ -1,16 +1,23 @@
 import textwrap
 import zoneinfo
 from datetime import datetime, timedelta
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any, Annotated
 from uuid import UUID
 
 from icalendar import Event, vUri, Alarm, vDuration
-from pydantic import ConfigDict, HttpUrl
+from pydantic import BaseModel, ConfigDict, HttpUrl, AnyUrl, BeforeValidator
 from pydantic.alias_generators import to_camel
-from pydantic.main import BaseModel
-from pydantic_core import Url
 
 from javazone.sleepingpill import make_url
+
+
+def empty_str_to_none(v: Any) -> Any:
+    if isinstance(v, str) and v == "":
+        return None
+    return v
+
+
+EmptyInt = Annotated[Optional[int], BeforeValidator(empty_str_to_none)]
 
 
 class UserBase(BaseModel):
@@ -59,9 +66,9 @@ class Session(SessionId):
     room: Optional[str] = None
     start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None
-    register_loc: Optional[Url] = None
+    register_loc: Optional[AnyUrl] = None
     start_slot: Optional[datetime] = None
-    video: Optional[int] = None
+    video: EmptyInt = None
     speakers: list[dict]
 
     @classmethod
