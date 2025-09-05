@@ -14,10 +14,6 @@ LOG = logging.getLogger(__name__)
 DATA_URL = "https://sleepingpill.javazone.no/public/allSessions/javazone_%d"
 
 
-def make_url(session_id: uuid.UUID):
-    return f"https://{settings.year}.javazone.no/program/{session_id}"
-
-
 def _load_data(year):
     resp = requests.get(DATA_URL % year)
     resp.raise_for_status()

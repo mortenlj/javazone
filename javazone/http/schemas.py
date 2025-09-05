@@ -8,7 +8,12 @@ from icalendar import Event, vUri, Alarm, vDuration
 from pydantic import BaseModel, ConfigDict, HttpUrl, AnyUrl, BeforeValidator
 from pydantic.alias_generators import to_camel
 
-from javazone.sleepingpill import make_url
+from javazone.core.config import settings
+
+DEFAULT_URL_PATTERN = "https://{year}.javazone.no/program/{session_id}"
+JAVAZONE_URL_PATTERNS = {
+    2025: "https://2025.javazone.no/en/program/{session_id}",
+}
 
 
 def empty_str_to_none(v: Any) -> Any:
@@ -53,6 +58,10 @@ class SessionId(BaseModel):
     )
     id: UUID
 
+    def make_url(self):
+        pattern = JAVAZONE_URL_PATTERNS.get(settings.year, DEFAULT_URL_PATTERN)
+        return pattern.format(year=settings.year, session_id=self.id)
+
 
 class Session(SessionId):
     conference_id: UUID
@@ -86,7 +95,7 @@ class Session(SessionId):
         Room: {self.room or "TBA"}
         Video: {self.video_url() or 'Not yet available'}
         
-        More info: {make_url(self.id)}
+        More info: {self.make_url()}
         """
         )
         return description
@@ -135,7 +144,7 @@ class Session(SessionId):
         if self.room:
             event.add("location", self.room)
 
-        uri = vUri(make_url(self.id))
+        uri = vUri(self.make_url())
         event.add("url", uri)
 
         if url_for:
