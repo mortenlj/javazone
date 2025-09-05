@@ -35,12 +35,21 @@
     </div>
     {% endif %}
     <div class="row">
-        <div class="col-10 text-start">
+        <div class="col-3 text-start">
+            <a href="{{ session.make_url() }}">View at JavaZone</a>
+        </div>
+        <div class="col-9 text-end">
+            {% if session.video %}
+                <a href="{{ session.video_url() }}">View video</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-start">
             <h6 class="d-inline">Speakers:</h6>
             {% for speaker in session.speakers %}
                 <span class="m-1">{{ speaker.name }}</span>
             {% endfor %}
         </div>
-        <div class="col-2"><a href="{{ session.make_url() }}">View at JavaZone</a></div>
     </div>
 {% endblock %}
