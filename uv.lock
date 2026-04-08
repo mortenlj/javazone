@@ -369,7 +369,7 @@ wheels = [
 [[package]]
 name = "javazone"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "anyio" },
     { name = "authlib" },

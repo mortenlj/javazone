@@ -27,7 +27,11 @@ RESEAL_SCRIPT = textwrap.dedent(
 
 @object_type
 class Javazone:
-    source: Annotated[dagger.Directory, DefaultPath("/"), Ignore(["target", ".github", "dagger", ".idea"])]
+    source: Annotated[
+        dagger.Directory,
+        DefaultPath("/"),
+        Ignore(["target", ".github", "dagger", ".idea"]),
+    ]
 
     async def resolve_python_version(self) -> str:
         """Resolve the Python version"""
@@ -37,7 +41,10 @@ class Javazone:
         return py_version[2:]
 
     async def install_mise(
-        self, container: dagger.Container, platform: dagger.Platform | None = None, *tools
+        self,
+        container: dagger.Container,
+        platform: dagger.Platform | None = None,
+        *tools,
     ) -> dagger.Container:
         """Install Mise in a container, and install tools"""
         mise_binary = dag.container(platform=platform).from_("jdxcode/mise:latest").file("/usr/local/bin/mise")
@@ -62,7 +69,15 @@ class Javazone:
             (await self.install_mise(base_container, platform, "uv", "ruff"))
             .with_file("/app/pyproject.toml", self.source.file("pyproject.toml"))
             .with_file("/app/uv.lock", self.source.file("uv.lock"))
-            .with_exec(["uv", "sync", "--no-install-workspace", "--locked", "--compile-bytecode"])
+            .with_exec(
+                [
+                    "uv",
+                    "sync",
+                    "--no-install-workspace",
+                    "--locked",
+                    "--compile-bytecode",
+                ]
+            )
         )
 
     @function
@@ -70,7 +85,7 @@ class Javazone:
         """Build the application"""
         return (
             (await self.deps(platform))
-            .with_directory("/app/javazone", self.source.directory("javazone"))
+            .with_directory("/app/ibidem", self.source.directory("ibidem"))
             .with_directory("/app/templates", self.source.directory("templates"))
             .with_directory("/app/tests", self.source.directory("tests"))
             .with_exec(["uv", "sync", "--locked", "--compile-bytecode", "--group=dev"])
@@ -90,10 +105,10 @@ class Javazone:
             .from_(f"python:{python_version}-slim")
             .with_workdir("/app")
             .with_directory("/app/.venv", deps.directory("/app/.venv"))
-            .with_directory("/app/javazone", src.directory("/app/javazone"))
+            .with_directory("/app/ibidem", src.directory("/app/ibidem"))
             .with_directory("/app/templates", src.directory("/app/templates"))
             .with_env_variable("PATH", "/app/.venv/bin:${PATH}", expand=True)
-            .with_entrypoint(["/app/.venv/bin/python", "-m", "javazone"])
+            .with_entrypoint(["/app/.venv/bin/python", "-m", "ibidem.javazone"])
         )
 
     @function
@@ -134,7 +149,8 @@ class Javazone:
 
     @function
     async def reseal_secret(
-        self, kubeconfig: Annotated[dagger.Secret, Doc("kubeconfig file for the cluster")]
+        self,
+        kubeconfig: Annotated[dagger.Secret, Doc("kubeconfig file for the cluster")],
     ) -> dagger.File:
         """Reseal the secret, using the kubeconfig file for the cluster"""
         return await (
