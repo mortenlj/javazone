@@ -1,0 +1,12 @@
+default_provider = "bitwarden"
+
+[providers.bitwarden]
+type = "bitwarden"
+
+[secrets]
+OAUTH__CLIENT_ID= { provider = "bitwarden", value = "OAUTH__CLIENT_ID" }
+OAUTH__CLIENT_SECRET= { provider = "bitwarden", value = "OAUTH__CLIENT_SECRET" }
+MAIL__SENDER_EMAIL= { provider = "bitwarden", value = "MAIL__SENDER_EMAIL" }
+MAIL__SMTP__HOST= { provider = "bitwarden", value = "MAIL__SMTP__HOST" }
+MAIL__SMTP__USERNAME= { provider = "bitwarden", value = "MAIL__SMTP__USERNAME" }
+MAIL__SMTP__PASSWORD= { provider = "bitwarden", value = "MAIL__SMTP__PASSWORD" }
