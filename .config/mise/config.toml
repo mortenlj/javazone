@@ -26,7 +26,7 @@ run = "uv run black ."
 description = "Format the project using black"
 
 [tools]
-dagger = "v0.20.5"
+dagger = "v0.20.6"
 python = "3.14.4"
 ruff = "latest"
 uv = "latest"
