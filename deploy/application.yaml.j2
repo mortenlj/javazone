@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/name: javazone
     app: javazone
 spec:
-  image: "{{ image }}:{{ version }}"
+  image: "{{ environ('IMAGE') }}:{{ environ('VERSION') }}"
   ports:
     http:
       port: 3000
