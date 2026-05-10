@@ -250,4 +250,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# Stuff
 deploy.yaml
+misc/coding-team
