@@ -1,0 +1,67 @@
+[task_config]
+includes = [".config/mise-lib/virtual_tasks.toml", ".config/mise-lib"]
+
+[tools]
+python = """
+{%- set command = 'grep requires-python ' ~ config_root ~ "/pyproject.toml | grep --only-matching --extended-regexp '3.[0-9]+'" -%}
+
+{{- exec(cache_key="python", cache_duration="5m", command=command) -}}
+"""
+uv = "latest"
+
+[env]
+VERSION = "${MORTENLJ_MISE_LIB_CLEAN_VERSION:-0.1.0+develop}"
+DATABASE__URL="postgresql+psycopg://javazone:password@localhost:5432/javazone"
+
+[settings]
+env_shell_expand = true
+
+[tasks.test]
+depends = ["python:test"]
+description = "Run tests"
+
+[tasks.fmt]
+depends = ["python:fmt"]
+description = "Format source"
+
+[tasks.fmt-check]
+depends = ["python:fmt-check"]
+description = "Check formatting"
+
+[tasks.lint]
+depends = ["python:lint"]
+description = "Lint the project"
+
+[tasks.lint-fix]
+depends = ["python:lint-fix"]
+description = "Run lint fixers"
+
+[tasks.ci]
+depends = ["test", "fmt-check", "lint"]
+description = "Run CI tasks"
+
+[tasks.build]
+depends = ["python:build"]
+description = "Build the project in debug mode"
+sources = ["javazone/**/*.py", "ibidem/**/*.py", "src/**/*.py", "uv.lock", "pyproject.toml"]
+outputs = ["dist/javazone-*.tar.gz", "dist/javazone-*.whl"]
+
+[tasks.release-build]
+depends = ["python:release-build"]
+description = "Build the project"
+sources = ["javazone/**/*.py", "ibidem/**/*.py", "src/**/*.py", "uv.lock", "pyproject.toml"]
+outputs = ["dist/javazone-*.tar.gz", "dist/javazone-*.whl"]
+
+[tasks."docker:deps"]
+run = "docker compose up --remove-orphans --renew-anon-volumes --detach"
+description = "Launch the dependencies in docker compose, for use when running the project locally"
+
+[tasks."local:docker"]
+run = "docker compose --profile local up --remove-orphans --renew-anon-volumes"
+description = "Run locally, using docker image"
+depends = ["docker"]
+
+[tasks.local]
+run = "uv run python -m ibidem.javazone"
+description = "Run locally"
+depends = ["docker:deps"]

@@ -93,7 +93,7 @@ class Session(SessionId):
         
         Speakers: {", ".join(s["name"] for s in self.speakers)}
         Room: {self.room or "TBA"}
-        Video: {self.video_url() or 'Not yet available'}
+        Video: {self.video_url() or "Not yet available"}
         
         More info: {self.make_url()}
         """

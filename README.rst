@@ -15,26 +15,26 @@ If the session changes, you get calendar updates automatically.
 Development
 -----------
 
-We use dagger_ for building, and mise_ to manage tool versions and development tasks.
+We use mise_ (with mise-lib_) to manage tool versions, development tasks and building.
 
 Various useful commands:
 
 Reseal the secret by connecting to the current cluster context and running kubeseal
 -----------------------------------------------------------------------------------
 
-``dagger call reseal-secret --kubeconfig=file:~/.kube/config --output=deploy/sealed-secret.yaml``
+``mise run reseal-secret``
 
 Assemble the deploy manifests
 -----------------------------
 
-``dagger call assemble-manifests "--image=${IMAGE}" "--version=${VERSION}" --output=deploy.yaml``
+``mise run k8s:manifests``
 
 Build the docker image
 ----------------------
 
-``dagger call publish "--image=${IMAGE}" "--version=${VERSION}"``
+``mise run docker``
 
 
 
-.. _dagger: https://dagger.io
 .. _mise: https://mise.jdx.dev
+.. _mise-lib: https://github.com/mortenlj/mise-lib

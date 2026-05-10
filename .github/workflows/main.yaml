@@ -1,123 +1,44 @@
-name: Build
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+name: javazone
 
 on:
   push:
   workflow_dispatch:
 
-env:
-  IMAGE: ghcr.io/${{ github.repository }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   setup:
-    name: Set variables
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
-      - name: "Set image version"
-        id: constants
-        run: |
-          export version="$(date +%Y%m%d%H%M%S)-$(git describe --always --dirty --exclude '*')"
-          echo "VERSION=${version}" >> ${GITHUB_OUTPUT}
-    outputs:
-      VERSION: "${{ steps.constants.outputs.VERSION }}"
+    uses: mortenlj/mise-lib/.github/workflows/setup.yaml@main
+
   build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: setup
     permissions:
-      contents: read
-      id-token: write
       packages: write
       checks: write
       pull-requests: write
-    env:
-      VERSION: "${{ needs.setup.outputs.VERSION }}"
-      DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
-    steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
-      - name: Login to GitHub Packages Docker Registry
-        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push images
-        uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.4.1
-        with:
-          version: "latest"
-          verb: call
-          args: publish "--image=${IMAGE}" "--version=${VERSION}"
-      - name: Assemble manifests
-        uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.4.1
-        with:
-          version: "latest"
-          verb: call
-          args: assemble-manifests "--image=${IMAGE}" "--version=${VERSION}" --output=deploy.yaml
-      - name: Save manifests for later deploy
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
-        with:
-          name: manifests
-          path: deploy.yaml
+    needs: setup
+    uses: mortenlj/mise-lib/.github/workflows/build-docker.yaml@main
+    with:
+      main-image: ghcr.io/${{ github.repository }}
+      clean-version: ${{ fromJSON(needs.setup.outputs.clean-version) }}
+      tool-versions: ${{ needs.setup.outputs.tool-versions }}
+    secrets:
+      GHCR_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
   deploy:
-    name: Deploy
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
     permissions:
       id-token: write # This is required for requesting the JWT
     needs:
       - setup
       - build
-    steps:
-      - name: Get kubeconfig
-        uses: mortenlj/kube-actions/get-kubeconfig@main
-      - name: Download manifests from build
-        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8
-        with:
-          name: manifests
-      - id: join-zt
-        name: Join ZeroTier network
-        uses: mortenlj/zerotier-actions/join-zt@main
-        with:
-          network_id: ${{ secrets.ZEROTIER_NETWORK_ID }}
-          api_accesstoken: ${{ secrets.ZEROTIER_API_ACCESSTOKEN }}
-          ping_target: k3s.home.ibidem.no
-      - name: Run kubectl apply
-        uses: mortenlj/kube-actions/apply-manifest@main
-      - name: Leave ZeroTier network
-        if: always()
-        uses: mortenlj/zerotier-actions/leave-zt@main
-        with:
-          node_id: ${{ steps.join-zt.outputs.node_id }}
-          network_id: ${{ secrets.ZEROTIER_NETWORK_ID }}
-          api_accesstoken: ${{ secrets.ZEROTIER_API_ACCESSTOKEN }}
+    uses: mortenlj/mise-lib/.github/workflows/deploy.yaml@main
+    secrets:
+      ZEROTIER_NETWORK_ID: ${{ secrets.ZEROTIER_NETWORK_ID }}
+      ZEROTIER_API_ACCESSTOKEN: ${{ secrets.ZEROTIER_API_ACCESSTOKEN }}
+
   cleanup:
-    name: Cleanup
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    needs: build
     permissions:
       packages: write
-    steps:
-      - name: Cleanup main images
-        uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          keep-n-tagged: 5
-          older-than: 2 weeks
-          delete-untagged: true
-          delete-ghost-images: true
-          delete-orphaned-images: true
-          delete-partial-images: true
-      - name: Cleanup local-build images
-        uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1.0.16
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          package: javazone/local-build
-          delete-untagged: true
-          delete-ghost-images: true
-          delete-orphaned-images: true
-          delete-partial-images: false
+    needs: build
+    uses: mortenlj/mise-lib/.github/workflows/cleanup.yaml@main

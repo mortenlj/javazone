@@ -1,12 +1,14 @@
 [project]
 name = "javazone"
-version = "0.1.0"
 description = "JavaZone calendar manager"
 authors = [
     {name = "Morten Lied Johansen", email = "mortenjo@ifi.uio.no"},
 ]
 license = {text = "MIT"}
-requires-python = "~=3.13"
+requires-python = "==3.13.*"
+dynamic = [
+    "version",
+]
 dependencies = [
     "fiaas-logging<1.0.0,>=0.1.1",
     "pydantic<3.0.0,>=2.9.2",
@@ -36,7 +38,7 @@ dev = [
     "black==25.12.0",
 ]
 
-[tool.black]
+[tool.ruff]
 line-length = 120
 
 [tool.ruff.lint]
@@ -51,3 +53,6 @@ include = ["ibidem"]
 
 [tool.hatch.build.targets.wheel]
 include = ["ibidem"]
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"

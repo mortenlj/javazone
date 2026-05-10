@@ -6,10 +6,10 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
-from ibidem.javazone.http.deps import get_db, get_current_user
-from ibidem.javazone.http.www.widgets import router as widgets_router
-from ibidem.javazone.http import schemas
 from ibidem.javazone.database import models
+from ibidem.javazone.http import schemas
+from ibidem.javazone.http.deps import get_db, get_current_user, templates
+from ibidem.javazone.http.www.widgets import router as widgets_router
 from ibidem.javazone.services import sessions
 
 LOG = logging.getLogger(__name__)
@@ -17,15 +17,10 @@ LOG = logging.getLogger(__name__)
 router = APIRouter()
 router.include_router(widgets_router, prefix="/widgets", tags=["widgets"])
 
-templates = Jinja2Templates(directory="templates")
-
 
 @router.get("/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def index(request: Request):
-    return templates.TemplateResponse(
-        request=request,
-        name="index.html.j2",
-    )
+def index(request: Request, templates: Jinja2Templates = Depends(templates)):
+    return templates.TemplateResponse(request, "index.html.j2")
 
 
 @router.get("/sessions/{id}", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
@@ -34,6 +29,7 @@ def session(
     id: uuid.UUID,
     user: schemas.User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    templates: Jinja2Templates = Depends(templates),
 ):
     session = sessions.get(id, db)
     return templates.TemplateResponse(
@@ -96,6 +92,7 @@ def all_sessions(
     request: Request,
     user: schemas.User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    templates: Jinja2Templates = Depends(templates),
 ):
     all_sessions = [schemas.SessionWithUsers.from_db_session(s) for s in sessions.get_all(db)]
     return templates.TemplateResponse(
@@ -113,6 +110,7 @@ def user_sessions(
     request: Request,
     user: schemas.User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    templates: Jinja2Templates = Depends(templates),
 ):
     sess = [
         schemas.SessionWithUsers.from_db_session(s)

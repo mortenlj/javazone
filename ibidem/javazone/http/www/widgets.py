@@ -7,11 +7,10 @@ from sqlalchemy.orm import Session
 
 from ibidem.javazone.database import models
 from ibidem.javazone.http import schemas
-from ibidem.javazone.http.deps import get_db, get_current_user
+from ibidem.javazone.http.deps import get_db, get_current_user, templates
 from ibidem.javazone.services import sessions
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
 
 
 @router.get("/{id}/update", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
@@ -20,6 +19,7 @@ def update_session_widget(
     id: uuid.UUID,
     user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    templates: Jinja2Templates = Depends(templates),
 ):
     session = sessions.update(id, user, db)
     return templates.TemplateResponse(
@@ -38,6 +38,7 @@ def join_session_widget(
     id: uuid.UUID,
     user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    templates: Jinja2Templates = Depends(templates),
 ):
     session = sessions.join(id, user, db)
     return templates.TemplateResponse(
@@ -56,6 +57,7 @@ def leave_session_widget(
     id: uuid.UUID,
     user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    templates: Jinja2Templates = Depends(templates),
 ):
     session = sessions.leave(id, user, db)
     return templates.TemplateResponse(
@@ -75,6 +77,7 @@ def session_widget(
     size: str = "small",
     user: models.User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    templates: Jinja2Templates = Depends(templates),
 ):
     session = sessions.get(id, db)
     return templates.TemplateResponse(

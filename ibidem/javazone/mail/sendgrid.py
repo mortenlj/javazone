@@ -26,7 +26,7 @@ def send_message(eq: EmailQueue, title: str, invite: Calendar):
         subject=title,
     )
 
-    mime_type = f"text/calendar;method={invite.get("method")}"
+    mime_type = f"text/calendar;method={invite.get('method')}"
     bytes = invite.to_ical()
     message.add_content(bytes.decode("utf-8"), mime_type)
 

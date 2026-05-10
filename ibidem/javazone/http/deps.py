@@ -2,9 +2,11 @@ import logging
 from pprint import pformat
 from typing import Annotated
 
+import jinja2
 from authlib.jose import JoseError
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from ibidem.javazone.core.config import settings
@@ -25,6 +27,12 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def templates():
+    loader = jinja2.PackageLoader("ibidem.javazone")
+    env = jinja2.Environment(loader=loader, autoescape=True)
+    return Jinja2Templates(env=env)
 
 
 async def get_current_user(
