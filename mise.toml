@@ -3,10 +3,7 @@ includes = [".config/mise-lib/virtual_tasks.toml", ".config/mise-lib/tasks"]
 
 [tools]
 python = """
-{%- set command = 'grep requires-python ' ~ config_root ~ "/pyproject.toml | grep --only-matching --extended-regexp '3.[0-9]+'" -%}
-
-{{- exec(cache_key="python", cache_duration="5m", command=command) -}}
-"""
+3.14.6"""
 uv = "latest"
 
 [env]
