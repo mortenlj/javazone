@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import logging
 import signal
+import sys
 from contextlib import asynccontextmanager
 
-import sys
 import uvicorn
 from fastapi import FastAPI
 

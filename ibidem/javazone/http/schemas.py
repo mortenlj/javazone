@@ -1,11 +1,11 @@
 import textwrap
 import zoneinfo
 from datetime import datetime, timedelta
-from typing import List, Optional, Dict, Any, Annotated
+from typing import Annotated, Any
 from uuid import UUID
 
-from icalendar import Event, vUri, Alarm, vDuration
-from pydantic import BaseModel, ConfigDict, HttpUrl, AnyUrl, BeforeValidator
+from icalendar import Alarm, Event, vDuration, vUri
+from pydantic import AnyUrl, BaseModel, BeforeValidator, ConfigDict, HttpUrl
 from pydantic.alias_generators import to_camel
 
 from ibidem.javazone.core.config import settings
@@ -22,7 +22,7 @@ def empty_str_to_none(v: Any) -> Any:
     return v
 
 
-EmptyInt = Annotated[Optional[int], BeforeValidator(empty_str_to_none)]
+EmptyInt = Annotated[int | None, BeforeValidator(empty_str_to_none)]
 
 
 class UserBase(BaseModel):
@@ -32,7 +32,7 @@ class UserBase(BaseModel):
 class AuthenticatedUser(UserBase):
     email: str
     name: str = ""
-    picture_url: Optional[HttpUrl] = None
+    picture_url: HttpUrl | None = None
 
     def __eq__(self, other):
         for field in AuthenticatedUser.model_fields.keys():
@@ -48,7 +48,7 @@ class AuthenticatedUser(UserBase):
 
 
 class User(AuthenticatedUser):
-    sessions: List["SessionId"]
+    sessions: list["SessionId"]
 
 
 class SessionId(BaseModel):
@@ -71,12 +71,12 @@ class Session(SessionId):
     language: str
     abstract: str
     title: str
-    workshop_prerequisites: Optional[str] = None
-    room: Optional[str] = None
-    start_time: Optional[datetime] = None
-    end_time: Optional[datetime] = None
-    register_loc: Optional[AnyUrl] = None
-    start_slot: Optional[datetime] = None
+    workshop_prerequisites: str | None = None
+    room: str | None = None
+    start_time: datetime | None = None
+    end_time: datetime | None = None
+    register_loc: AnyUrl | None = None
+    start_slot: datetime | None = None
     video: EmptyInt = None
     speakers: list[dict]
 
@@ -100,7 +100,7 @@ class Session(SessionId):
         )
         return description
 
-    def video_url(self) -> Optional[str]:
+    def video_url(self) -> str | None:
         if self.video:
             return f"https://vimeo.com/{self.video}"
         return None
@@ -184,7 +184,7 @@ class Session(SessionId):
 
 
 class SessionWithUsers(Session):
-    users: List["AuthenticatedUser"] = []
+    users: list["AuthenticatedUser"] = []
 
     @classmethod
     def from_db_session(cls, db_session):
@@ -197,7 +197,7 @@ class SessionSlot(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     start_time: datetime
-    _sessions: List[Session] = []
+    _sessions: list[Session] = []
 
     def start(self) -> str:
         if self.start_time:
@@ -205,8 +205,8 @@ class SessionSlot(BaseModel):
         return "TBA"
 
     @property
-    def sessions(self) -> List[Session]:
-        return list(sorted(self._sessions, key=lambda session: session.room))
+    def sessions(self) -> list[Session]:
+        return sorted(self._sessions, key=lambda session: session.room)
 
     def add_session(self, session: Session):
         if session.start_time != self.start_time:
@@ -219,11 +219,11 @@ class SessionsDay(BaseModel):
 
     id: str
     name: str
-    _session_slots: Dict[datetime, SessionSlot] = {}
+    _session_slots: dict[datetime, SessionSlot] = {}
 
     @property
-    def session_slots(self) -> List[SessionSlot]:
-        return list(sorted(self._session_slots.values(), key=lambda block: block.start_time))
+    def session_slots(self) -> list[SessionSlot]:
+        return sorted(self._session_slots.values(), key=lambda block: block.start_time)
 
     def add_session(self, session: Session):
         slot = self._session_slots.setdefault(session.start_slot, SessionSlot(start_time=session.start_slot))
@@ -235,7 +235,7 @@ class SessionsPage(BaseModel):
 
     title: str
     description: str
-    days: List[SessionsDay] = []
+    days: list[SessionsDay] = []
 
 
 SessionWithUsers.model_rebuild()

@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -22,7 +21,7 @@ def create_user(user: schemas.AuthenticatedUser, db: Session) -> models.User:
     return db_user
 
 
-def get_user(user: schemas.AuthenticatedUser, db: Session) -> Optional[models.User]:
+def get_user(user: schemas.AuthenticatedUser, db: Session) -> models.User | None:
     return db.query(models.User).filter(models.User.email == user.email).first()
 
 

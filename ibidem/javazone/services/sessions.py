@@ -1,5 +1,4 @@
 import uuid
-from typing import Optional
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
@@ -12,14 +11,14 @@ def get_all(db: Session) -> list[models.Session]:
 
 
 def get(id: uuid.UUID, db: Session) -> models.Session:
-    db_session: Optional[models.Session] = db.query(models.Session).filter(models.Session.id == id).first()
+    db_session: models.Session | None = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
     return db_session
 
 
 def update(id: uuid.UUID, user: models.User, db: Session) -> models.Session:
-    db_session: Optional[models.Session] = db.query(models.Session).filter(models.Session.id == id).first()
+    db_session: models.Session | None = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
     try:
@@ -32,7 +31,7 @@ def update(id: uuid.UUID, user: models.User, db: Session) -> models.Session:
 
 
 def join(id: uuid.UUID, user: models.User, db: Session) -> models.Session:
-    db_session: Optional[models.Session] = db.query(models.Session).filter(models.Session.id == id).first()
+    db_session: models.Session | None = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
     try:
@@ -46,7 +45,7 @@ def join(id: uuid.UUID, user: models.User, db: Session) -> models.Session:
 
 
 def leave(id: uuid.UUID, user: models.User, db: Session) -> models.Session:
-    db_session: Optional[models.Session] = db.query(models.Session).filter(models.Session.id == id).first()
+    db_session: models.Session | None = db.query(models.Session).filter(models.Session.id == id).first()
     if db_session is None:
         raise HTTPException(status_code=404, detail="Session not found")
     try:

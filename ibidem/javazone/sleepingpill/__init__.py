@@ -23,7 +23,7 @@ def _load_data(year):
 
 def update_sessions(db: Session):
     LOG.info("Updating sessions to generation %d", settings.update_generation)
-    generation_suffix = f"-gen{settings.update_generation}".encode("utf-8")
+    generation_suffix = f"-gen{settings.update_generation}".encode()
     data = _load_data(settings.year)
     db_sessions = {db_session.id: db_session for db_session in db.query(models.Session).all()}
     needs_delete = set(db_sessions.keys())

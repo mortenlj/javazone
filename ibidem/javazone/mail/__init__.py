@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from fastapi import Request
-from icalendar import Calendar, vCalAddress, vText, vBoolean
+from icalendar import Calendar, vBoolean, vCalAddress, vText
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -12,8 +12,7 @@ from ibidem.javazone.database import models
 from ibidem.javazone.database.models import EmailQueue
 from ibidem.javazone.http import schemas
 from ibidem.javazone.ics import create_calendar
-from ibidem.javazone.mail import sendgrid
-from ibidem.javazone.mail import smtp
+from ibidem.javazone.mail import sendgrid, smtp
 
 LOG = logging.getLogger(__name__)
 

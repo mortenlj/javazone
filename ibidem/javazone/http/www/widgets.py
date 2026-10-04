@@ -1,13 +1,13 @@
 import uuid
 
-from fastapi import APIRouter, Request, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from ibidem.javazone.database import models
 from ibidem.javazone.http import schemas
-from ibidem.javazone.http.deps import get_db, get_current_user, templates
+from ibidem.javazone.http.deps import get_current_user, get_db, templates
 from ibidem.javazone.services import sessions
 
 router = APIRouter()

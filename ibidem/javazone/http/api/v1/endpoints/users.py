@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from ibidem.javazone.http import schemas
-from ibidem.javazone.http.deps import get_db, get_current_user
+from ibidem.javazone.http.deps import get_current_user, get_db
 from ibidem.javazone.services import users
 
 router = APIRouter(

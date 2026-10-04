@@ -3,7 +3,7 @@ import logging
 import urllib.error
 
 from icalendar import Calendar
-from sendgrid import Mail, Attachment, SendGridAPIClient
+from sendgrid import Attachment, Mail, SendGridAPIClient
 
 from ibidem.javazone.core.config import settings
 from ibidem.javazone.database.models import EmailQueue

@@ -2,7 +2,7 @@ import datetime
 from enum import Enum
 
 from furl import furl
-from pydantic import AnyUrl, BaseModel, SecretStr, Field
+from pydantic import AnyUrl, BaseModel, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 

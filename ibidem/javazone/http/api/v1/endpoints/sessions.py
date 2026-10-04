@@ -1,14 +1,13 @@
 import uuid
-from typing import List
 
-from fastapi import APIRouter, Depends, BackgroundTasks, Response, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Request, Response
 from icalendar import Calendar
 from sqlalchemy.orm import Session
 
 from ibidem.javazone import sleepingpill
 from ibidem.javazone.database import models
 from ibidem.javazone.http import schemas
-from ibidem.javazone.http.deps import get_db, get_current_user
+from ibidem.javazone.http.deps import get_current_user, get_db
 from ibidem.javazone.ics import create_calendar
 from ibidem.javazone.services import sessions
 
@@ -23,7 +22,7 @@ class CalendarResponse(Response):
 
 @router.get(
     "",
-    response_model=List[schemas.Session],
+    response_model=list[schemas.Session],
 )
 def get_sessions(db: Session = Depends(get_db)) -> list[schemas.Session]:
     """List all sessions"""

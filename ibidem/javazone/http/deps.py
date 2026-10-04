@@ -5,7 +5,7 @@ from typing import Annotated
 import jinja2
 from authlib.jose import JoseError
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 

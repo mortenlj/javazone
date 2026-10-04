@@ -1,8 +1,6 @@
 from fastapi import APIRouter
 
-from ibidem.javazone.http.api.v1.endpoints import users
-from ibidem.javazone.http.api.v1.endpoints import sessions
-from ibidem.javazone.http.api.v1.endpoints import email_queue
+from ibidem.javazone.http.api.v1.endpoints import email_queue, sessions, users
 
 router = APIRouter()
 router.include_router(users.router, prefix="/users", tags=["user"])

@@ -1,6 +1,6 @@
 import logging
 import smtplib
-from email import utils, headerregistry
+from email import headerregistry, utils
 from email.message import EmailMessage, MIMEPart
 
 from ibidem.javazone.core.config import settings

@@ -1,14 +1,14 @@
 import logging
 import uuid
 
-from fastapi import APIRouter, Request, status, Depends
+from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from ibidem.javazone.database import models
 from ibidem.javazone.http import schemas
-from ibidem.javazone.http.deps import get_db, get_current_user, templates
+from ibidem.javazone.http.deps import get_current_user, get_db, templates
 from ibidem.javazone.http.www.widgets import router as widgets_router
 from ibidem.javazone.services import sessions
 

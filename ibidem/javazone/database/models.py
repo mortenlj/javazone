@@ -2,7 +2,7 @@ import enum
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, ForeignKey, Table, Text, Uuid, String, Enum, DateTime
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, String, Table, Text, Uuid
 from sqlalchemy.orm import relationship
 
 from ibidem.javazone.database import Base
