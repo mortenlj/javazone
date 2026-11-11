@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, BackgroundTasks, Depends, Request, status
 from sqlalchemy.orm import Session
 
@@ -10,5 +12,5 @@ router = APIRouter(
 
 
 @router.post("", name="Process queue", status_code=204)
-def process_queue(req: Request, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+def process_queue(req: Request, background_tasks: BackgroundTasks, db: Annotated[Session, Depends(get_db)]):
     background_tasks.add_task(mail.process_queue, req, db)

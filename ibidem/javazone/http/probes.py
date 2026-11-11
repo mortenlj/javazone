@@ -1,4 +1,5 @@
 import logging
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
@@ -15,7 +16,7 @@ router = APIRouter(
 
 
 @router.get("/healthy", status_code=status.HTTP_200_OK)
-def liveness(db: Session = Depends(get_db)):
+def liveness(db: Annotated[Session, Depends(get_db)]):
     try:
         db.execute(select(1))
     except OperationalError as e:

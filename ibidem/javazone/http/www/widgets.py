@@ -1,4 +1,5 @@
 import uuid
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import HTMLResponse
@@ -17,9 +18,9 @@ router = APIRouter()
 def update_session_widget(
     request: Request,
     id: uuid.UUID,
-    user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    templates: Jinja2Templates = Depends(templates),
+    user: Annotated[models.User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+    templates: Annotated[Jinja2Templates, Depends(templates)],
 ):
     session = sessions.update(id, user, db)
     return templates.TemplateResponse(
@@ -36,9 +37,9 @@ def update_session_widget(
 def join_session_widget(
     request: Request,
     id: uuid.UUID,
-    user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    templates: Jinja2Templates = Depends(templates),
+    user: Annotated[models.User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+    templates: Annotated[Jinja2Templates, Depends(templates)],
 ):
     session = sessions.join(id, user, db)
     return templates.TemplateResponse(
@@ -55,9 +56,9 @@ def join_session_widget(
 def leave_session_widget(
     request: Request,
     id: uuid.UUID,
-    user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    templates: Jinja2Templates = Depends(templates),
+    user: Annotated[models.User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+    templates: Annotated[Jinja2Templates, Depends(templates)],
 ):
     session = sessions.leave(id, user, db)
     return templates.TemplateResponse(
@@ -74,10 +75,10 @@ def leave_session_widget(
 def session_widget(
     request: Request,
     id: uuid.UUID,
+    user: Annotated[models.User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+    templates: Annotated[Jinja2Templates, Depends(templates)],
     size: str = "small",
-    user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    templates: Jinja2Templates = Depends(templates),
 ):
     session = sessions.get(id, db)
     return templates.TemplateResponse(

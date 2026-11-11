@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
@@ -11,10 +13,10 @@ router = APIRouter(
 
 
 @router.get("/me", response_model=schemas.User)
-def get_me(user: schemas.User = Depends(get_current_user)):
+def get_me(user: Annotated[schemas.User, Depends(get_current_user)]):
     return user
 
 
 @router.delete("/me", name="Delete user", status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
+def delete_user(user: Annotated[schemas.User, Depends(get_current_user)], db: Annotated[Session, Depends(get_db)]):
     users.delete_user(user, db)

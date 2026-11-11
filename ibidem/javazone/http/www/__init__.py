@@ -1,5 +1,6 @@
 import logging
 import uuid
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -19,7 +20,7 @@ router.include_router(widgets_router, prefix="/widgets", tags=["widgets"])
 
 
 @router.get("/", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
-def index(request: Request, templates: Jinja2Templates = Depends(templates)):
+def index(request: Request, templates: Annotated[Jinja2Templates, Depends(templates)]):
     return templates.TemplateResponse(request, "index.html.j2")
 
 
@@ -27,9 +28,9 @@ def index(request: Request, templates: Jinja2Templates = Depends(templates)):
 def session(
     request: Request,
     id: uuid.UUID,
-    user: schemas.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    templates: Jinja2Templates = Depends(templates),
+    user: Annotated[schemas.User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+    templates: Annotated[Jinja2Templates, Depends(templates)],
 ):
     session = sessions.get(id, db)
     return templates.TemplateResponse(
@@ -50,8 +51,8 @@ def session(
 def join_session_web(
     request: Request,
     id: uuid.UUID,
-    user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
+    user: Annotated[models.User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
 ):
     sessions.join(id, user, db)
     return str(request.url_for("session", id=id))
@@ -65,8 +66,8 @@ def join_session_web(
 def leave_session_web(
     request: Request,
     id: uuid.UUID,
-    user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
+    user: Annotated[models.User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
 ):
     sessions.leave(id, user, db)
     return str(request.url_for("session", id=id))
@@ -80,8 +81,8 @@ def leave_session_web(
 def update_session_web(
     request: Request,
     id: uuid.UUID,
-    user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
+    user: Annotated[models.User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
 ):
     sessions.update(id, user, db)
     return str(request.url_for("session", id=id))
@@ -90,9 +91,9 @@ def update_session_web(
 @router.get("/sessions", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
 def all_sessions(
     request: Request,
-    user: schemas.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    templates: Jinja2Templates = Depends(templates),
+    user: Annotated[schemas.User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+    templates: Annotated[Jinja2Templates, Depends(templates)],
 ):
     all_sessions = [schemas.SessionWithUsers.from_db_session(s) for s in sessions.get_all(db)]
     return templates.TemplateResponse(
@@ -108,9 +109,9 @@ def all_sessions(
 @router.get("/user/sessions", status_code=status.HTTP_200_OK, response_class=HTMLResponse)
 def user_sessions(
     request: Request,
-    user: schemas.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-    templates: Jinja2Templates = Depends(templates),
+    user: Annotated[schemas.User, Depends(get_current_user)],
+    db: Annotated[Session, Depends(get_db)],
+    templates: Annotated[Jinja2Templates, Depends(templates)],
 ):
     sess = [
         schemas.SessionWithUsers.from_db_session(s)

@@ -37,7 +37,7 @@ def templates():
 
 async def get_current_user(
     token: Annotated[HTTPAuthorizationCredentials, Depends(token_auth_scheme)],
-    db: Session = Depends(get_db),
+    db: Annotated[Session, Depends(get_db)],
 ):
     user = await get_authenticated_user(token)
     db_user = users.get_user(user, db)
