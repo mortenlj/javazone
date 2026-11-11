@@ -1,4 +1,5 @@
 import datetime
+import zoneinfo
 from enum import Enum
 
 from furl import furl
@@ -64,7 +65,7 @@ class Settings(BaseSettings):
     database: DatabaseSettings = Field(default_factory=DatabaseSettings)
     oauth: GoogleOAuthSettings = Field(default_factory=GoogleOAuthSettings)
     mail: MailSettings = Field(default_factory=MailSettings)
-    year: int = datetime.date.today().year
+    year: int = datetime.datetime.now(tz=zoneinfo.ZoneInfo("Europe/Oslo")).date().year
     root_path: str = ""
     update_generation: int = 0
 

@@ -1,4 +1,5 @@
 import logging
+import zoneinfo
 from datetime import datetime
 
 from fastapi import Request
@@ -35,7 +36,7 @@ async def process_queue(req: Request, db: Session):
             case _:
                 LOG.error("Unknown action %r", eq.action)
                 continue
-        eq.sent_at = datetime.now()
+        eq.sent_at = datetime.now(tz=zoneinfo.ZoneInfo("Europe/Oslo")).replace(tzinfo=None)
         db.add(eq)
         db.commit()
 

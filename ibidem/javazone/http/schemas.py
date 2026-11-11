@@ -35,7 +35,7 @@ class AuthenticatedUser(UserBase):
     picture_url: HttpUrl | None = None
 
     def __eq__(self, other):
-        for field in AuthenticatedUser.model_fields.keys():
+        for field in AuthenticatedUser.model_fields:
             if getattr(self, field) != getattr(other, field, None):
                 return False
         return True
